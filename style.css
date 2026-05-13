@@ -1,0 +1,890 @@
+
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth}
+:root{--bg:#020617;--card:rgba(2,6,23,.72);--blue:#38bdf8;--gold:#facc15;--green:#25d366;--text:#dbeafe}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:white;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 18% 10%,rgba(56,189,248,.22),transparent 28%),radial-gradient(circle at 85% 20%,rgba(250,204,21,.18),transparent 30%),radial-gradient(circle at 50% 100%,rgba(168,85,247,.14),transparent 32%);z-index:-2}
+body::after{content:"";position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:42px 42px;opacity:.18;z-index:-1}
+.container{max-width:1180px;margin:auto;padding:24px 18px 90px}
+.topbar{position:sticky;top:12px;z-index:50;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px 18px;margin-bottom:34px;border-radius:22px;background:rgba(2,6,23,.72);backdrop-filter:blur(18px);border:1px solid rgba(148,163,184,.2)}
+.logo{font-family:Montserrat,Inter,sans-serif;font-size:31px;font-weight:900;white-space:nowrap}.logo span{color:var(--gold)}
+.nav{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.nav a{text-decoration:none;color:#e5e7eb;padding:10px 13px;border-radius:999px;background:rgba(15,23,42,.7);border:1px solid rgba(148,163,184,.18);font-weight:800;font-size:14px}.nav a.active,.nav a:hover{color:var(--gold);border-color:var(--gold)}
+.hero{display:grid;grid-template-columns:330px 1fr;gap:48px;align-items:center;min-height:70vh}
+.profile-wrap{width:310px;height:310px;position:relative;display:grid;place-items:center}.profile-wrap::before,.profile-wrap::after{content:"";position:absolute;border-radius:50%;animation:spin 34s linear infinite}.profile-wrap::before{inset:0;border:3px solid transparent;border-left-color:var(--blue);border-bottom-color:var(--blue);box-shadow:0 0 24px rgba(56,189,248,.55)}.profile-wrap::after{inset:20px;border:6px solid transparent;border-top-color:var(--gold);border-right-color:var(--gold);animation-direction:reverse;box-shadow:0 0 24px rgba(250,204,21,.45)}.profile-wrap img{width:245px;height:245px;border-radius:50%;object-fit:cover;border:5px solid white;position:relative;z-index:2}
+.badge{display:inline-block;padding:11px 22px;border-radius:999px;border:2px solid var(--gold);color:var(--gold);font-weight:900;margin-bottom:18px;background:rgba(2,6,23,.5)}
+h1{font-family:Montserrat,Inter,sans-serif;font-size:48px;line-height:1.12;text-transform:uppercase;margin-bottom:18px}.gold{color:var(--gold)}
+.lead{font-size:20px;line-height:1.6;color:var(--text);max-width:760px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;cursor:pointer;padding:14px 20px;border-radius:17px;font-weight:900;color:white;background:rgba(15,23,42,.82);border:1px solid rgba(148,163,184,.2)}.btn.green{background:linear-gradient(180deg,#25d366,#128c4a);box-shadow:0 0 22px rgba(37,211,102,.42)}.btn.red{background:#ff0000}.btn.gold{background:var(--gold);color:#020617}
+.section-title{font-family:Montserrat,Inter,sans-serif;font-size:32px;margin:34px 0 18px;display:flex;align-items:center;gap:14px}.section-title::after{content:"";height:3px;flex:1;background:linear-gradient(90deg,var(--gold),transparent);border-radius:999px}
+.grid{display:grid;gap:18px}.grid.two{grid-template-columns:repeat(2,1fr)}.grid.three{grid-template-columns:repeat(3,1fr)}.grid.four{grid-template-columns:repeat(4,1fr)}
+.card{position:relative;overflow:hidden;padding:24px;border-radius:26px;background:var(--card);backdrop-filter:blur(18px);border:1px solid rgba(148,163,184,.2);box-shadow:0 14px 32px rgba(0,0,0,.26)}
+.card h2,.card h3{font-family:Montserrat,Inter,sans-serif;margin-bottom:10px}.card p{color:var(--text);line-height:1.65}.tag{display:inline-flex;margin:5px 5px 0 0;padding:9px 13px;border-radius:12px;background:#5b1110;color:white;font-weight:900;border:1px solid rgba(251,146,60,.55)}
+.video-player{display:none;margin-bottom:18px;border-radius:24px;overflow:hidden;background:#020617;border:1px solid rgba(148,163,184,.18);box-shadow:0 18px 42px rgba(0,0,0,.36)}.video-player.show{display:block}.video-player iframe{display:block;width:100%;aspect-ratio:16/9;border:0}
+.video-card{padding:0}.thumb{aspect-ratio:16/9;background-size:cover;background-position:center;position:relative}.thumb::after{content:"▶";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:#ff0000;display:grid;place-items:center;font-size:25px;font-weight:900}.video-body{padding:16px}.video-body span{display:block;color:#94a3b8;margin:8px 0 12px;line-height:1.4}
+.focus-room{border-radius:30px;min-height:390px;background:linear-gradient(90deg,rgba(2,6,23,.92),rgba(2,6,23,.55)),url("focus-room.png");background-size:cover;background-position:center;padding:34px;border:1px solid rgba(250,204,21,.25);box-shadow:0 22px 54px rgba(0,0,0,.42)}.focus-box{max-width:600px}.focus-box h2{font-family:Montserrat,Inter,sans-serif;font-size:38px}.input-row{display:flex;gap:8px;margin-top:16px}.input-row input{flex:1;min-width:0;padding:14px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(15,23,42,.82);color:white}
+.timer{font-family:Montserrat,Inter,sans-serif;font-size:48px;font-weight:900;margin:18px 0;color:var(--gold)}
+.footer{margin-top:44px;padding:28px;border-radius:26px;background:rgba(2,6,23,.72);border:1px solid rgba(148,163,184,.18);text-align:center;color:#94a3b8}
+.quick{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:900px){.container{padding:16px 12px 90px}.topbar{position:relative;top:0;flex-direction:column}.hero{grid-template-columns:1fr;text-align:center;gap:22px}.profile-wrap{margin:auto;width:220px;height:220px}.profile-wrap img{width:176px;height:176px}h1{font-size:30px}.lead{font-size:17px}.actions{justify-content:center}.grid.two,.grid.three,.grid.four{grid-template-columns:1fr}.input-row{flex-direction:column}.focus-room{padding:22px;min-height:520px}.quick{position:fixed;left:0;right:0;bottom:0;height:74px;display:grid;grid-template-columns:repeat(5,1fr);background:rgba(2,6,23,.95);backdrop-filter:blur(12px);z-index:90;border-top:1px solid rgba(148,163,184,.18)}.quick a{text-decoration:none;color:#d1d5db;font-size:11px;font-weight:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}.quick a span{font-size:21px}.quick a.active{color:var(--gold)}}
+
+
+/* FOCUS PANEL TEMİZ YENİ DÜZEN */
+.focus-layout{display:grid;grid-template-columns:1fr 330px;gap:18px;align-items:start}
+.focus-player-card,.focus-side-panel{border-radius:28px;background:rgba(2,6,23,.72);border:1px solid rgba(148,163,184,.18);box-shadow:0 18px 42px rgba(0,0,0,.32);backdrop-filter:blur(18px);padding:18px}
+.focus-player-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.focus-player-header h2{font-family:Montserrat,Inter,sans-serif;font-size:28px}
+.focus-player-header p{color:#dbeafe;line-height:1.5}
+.focus-chip{padding:10px 14px;border-radius:999px;background:#facc15;color:#020617;font-weight:900}
+.focus-main-screen{position:relative;border-radius:24px;overflow:hidden;background:#020617;border:1px solid rgba(148,163,184,.18);aspect-ratio:16/9}
+.focus-main-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
+.focus-main-screen.video-on iframe{display:block}
+.focus-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(135deg,rgba(56,189,248,.16),rgba(250,204,21,.10)),url("focus-room.png");background-size:cover;background-position:center}
+.focus-placeholder::before{content:"";position:absolute;inset:0;background:rgba(2,6,23,.58)}
+.focus-placeholder strong,.focus-placeholder span{position:relative;z-index:2}
+.focus-placeholder strong{font-size:28px;font-weight:900}
+.focus-placeholder span{margin-top:8px;color:#dbeafe}
+.focus-input-row{margin-top:14px}
+.focus-side-panel{position:sticky;top:96px}
+.timer-card-mini{text-align:center;border-radius:24px;padding:18px;background:rgba(15,23,42,.64);border:1px solid rgba(148,163,184,.16)}
+.timer-card-mini p{color:#dbeafe;font-weight:800;margin-bottom:12px}
+.focus-buttons{display:grid;gap:10px}
+.focus-buttons .btn{width:100%}
+.focus-scroll-box{margin-top:14px;max-height:330px;overflow-y:auto;display:grid;gap:10px;padding-right:4px}
+.focus-mini-card{padding:15px;border-radius:18px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.16);cursor:pointer;transition:.25s}
+.focus-mini-card:hover,.focus-mini-card.active{border-color:#facc15;box-shadow:0 0 18px rgba(250,204,21,.18)}
+.focus-mini-card strong{display:block;margin-bottom:5px}
+.focus-mini-card span{font-size:13px;color:#94a3b8}
+@media(max-width:900px){.focus-layout{grid-template-columns:1fr}.focus-side-panel{position:relative;top:0}.focus-scroll-box{display:flex;overflow-x:auto;max-height:none;padding-bottom:8px}.focus-mini-card{min-width:220px}.focus-player-header{flex-direction:column}.focus-placeholder strong{font-size:22px}}
+
+
+/* ===============================
+FOCUS ROOM - EN İYİ MOBİL TASARIM
+=============================== */
+.focus-mobile-hero{margin-top:10px;padding:20px 0 10px}
+.focus-kicker{display:inline-flex;padding:9px 14px;border-radius:999px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#facc15;font-weight:900;font-size:13px;letter-spacing:.8px;margin-bottom:14px}
+.focus-title-wrap h1{font-family:Montserrat,Inter,sans-serif;font-size:42px;line-height:1.05;margin-bottom:12px;text-transform:none}
+.focus-title-wrap p{font-size:18px;line-height:1.55;color:#dbeafe;max-width:780px}
+.focus-app-shell{display:grid;grid-template-columns:1fr 340px;grid-template-areas:"video timer" "video input" "video list";gap:16px;align-items:start;margin-top:16px}
+.focus-video-stage{grid-area:video;border-radius:30px;padding:16px;background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(250,204,21,.10)),rgba(2,6,23,.74);border:1px solid rgba(148,163,184,.20);box-shadow:0 20px 46px rgba(0,0,0,.36);backdrop-filter:blur(18px)}
+.focus-video-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.focus-video-top strong{display:block;font-size:17px;font-weight:900}
+.focus-video-top span{display:block;font-size:13px;color:#94a3b8;margin-top:3px}
+.focus-pill{padding:9px 13px;border-radius:999px;background:#facc15;color:#020617;font-weight:900}
+.focus-screen{position:relative;aspect-ratio:16/9;border-radius:24px;overflow:hidden;background:#020617;border:1px solid rgba(148,163,184,.20);box-shadow:inset 0 0 40px rgba(0,0,0,.3)}
+.focus-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none}
+.focus-screen.video-on iframe{display:block}
+.focus-screen-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;background:linear-gradient(135deg,rgba(2,6,23,.74),rgba(2,6,23,.38)),url("focus-room.png");background-size:cover;background-position:center}
+.focus-screen.video-on .focus-screen-placeholder{display:none}
+.focus-screen-placeholder strong{font-size:24px;font-weight:900;position:relative;z-index:2}
+.focus-screen-placeholder span{font-size:14px;line-height:1.5;color:#dbeafe;max-width:420px;margin-top:8px;position:relative;z-index:2}
+.focus-orbit{width:110px;height:110px;border-radius:50%;border:5px solid transparent;border-top-color:#facc15;border-right-color:#38bdf8;box-shadow:0 0 24px rgba(250,204,21,.28);animation:focusOrbit 5s linear infinite;margin-bottom:16px}
+.focus-control-card{grid-area:timer;border-radius:28px;padding:18px;background:rgba(2,6,23,.74);border:1px solid rgba(148,163,184,.20);box-shadow:0 18px 40px rgba(0,0,0,.30);backdrop-filter:blur(18px)}
+.focus-timer-circle{width:210px;height:210px;margin:0 auto 16px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(15,23,42,.95),rgba(2,6,23,.92));border:8px solid rgba(255,255,255,.07);position:relative;box-shadow:0 0 34px rgba(56,189,248,.15),inset 0 0 34px rgba(250,204,21,.08)}
+.focus-timer-circle::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:8px solid transparent;border-top-color:#facc15;border-right-color:#38bdf8;animation:focusOrbit 7s linear infinite}
+.focus-time{font-family:Montserrat,Inter,sans-serif;font-size:42px;font-weight:900;position:relative;z-index:2}
+.focus-timer-circle small{font-weight:800;color:#dbeafe;margin-top:7px;position:relative;z-index:2}
+.focus-primary-actions{display:grid;gap:10px}.focus-btn{border:0;cursor:pointer;border-radius:17px;padding:14px 15px;font-weight:900;color:white;background:rgba(15,23,42,.86);border:1px solid rgba(148,163,184,.18)}
+.focus-btn.main{background:linear-gradient(180deg,#facc15,#eab308);color:#020617;box-shadow:0 0 22px rgba(250,204,21,.28)}
+.focus-btn.danger{background:linear-gradient(180deg,#ef4444,#b91c1c)}
+.focus-input-card{grid-area:input;border-radius:24px;padding:16px;background:rgba(2,6,23,.74);border:1px solid rgba(148,163,184,.20);backdrop-filter:blur(18px)}
+.focus-input-card label{display:block;font-weight:900;margin-bottom:10px;font-size:14px;color:#facc15}
+.focus-input-line{display:flex;gap:8px}
+.focus-input-line input{flex:1;min-width:0;border:1px solid rgba(148,163,184,.20);background:rgba(15,23,42,.86);color:white;border-radius:15px;padding:13px 14px;outline:none}
+.focus-input-line button{border:0;border-radius:15px;padding:13px 14px;background:#25d366;color:white;font-weight:900;cursor:pointer}
+.focus-library-card{grid-area:list;border-radius:24px;padding:16px;background:rgba(2,6,23,.74);border:1px solid rgba(148,163,184,.20);backdrop-filter:blur(18px)}
+.focus-library-head{display:flex;justify-content:space-between;gap:10px;align-items:end;margin-bottom:12px}
+.focus-library-head strong{font-weight:900;font-size:16px}.focus-library-head span{font-size:12px;color:#94a3b8}
+.focus-video-list{display:grid;gap:10px;max-height:320px;overflow:auto;padding-right:2px}
+.focus-list-item{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:13px;border-radius:18px;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.16);color:white;cursor:pointer;transition:.22s}
+.focus-list-item.active,.focus-list-item:hover{border-color:#facc15;box-shadow:0 0 18px rgba(250,204,21,.18);transform:translateY(-1px)}
+.focus-list-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:rgba(250,204,21,.13);font-size:23px;flex:0 0 42px}
+.focus-list-item b{display:block;font-size:14px;margin-bottom:3px}.focus-list-item small{display:block;color:#94a3b8;font-size:12px}
+@keyframes focusOrbit{to{transform:rotate(360deg)}}
+@media(max-width:900px){.focus-title-wrap h1{font-size:34px}.focus-app-shell{grid-template-columns:1fr;grid-template-areas:"video" "timer" "input" "list";gap:14px}.focus-video-stage{padding:12px;border-radius:24px}.focus-video-top{align-items:flex-start}.focus-screen{border-radius:19px}.focus-control-card,.focus-input-card,.focus-library-card{border-radius:22px;padding:14px}.focus-timer-circle{width:190px;height:190px}.focus-time{font-size:38px}.focus-primary-actions{grid-template-columns:1fr 1fr}.focus-btn.main{grid-column:1 / -1}.focus-input-line{flex-direction:column}.focus-video-list{display:flex;overflow-x:auto;max-height:none;padding-bottom:6px}.focus-list-item{min-width:235px}}
+
+
+/* ===============================
+FOCUS MOBİL EKRANA SIĞDIRMA DÜZENİ
+=============================== */
+@media(max-width:900px){
+
+.container{padding:10px 10px 78px !important}
+.topbar{margin-bottom:10px !important;padding:10px !important;border-radius:18px !important}
+.logo{font-size:23px !important}
+.nav{gap:6px !important}
+.nav a{font-size:11px !important;padding:7px 9px !important}
+
+.focus-mobile-hero{padding:4px 0 6px !important;margin-top:0 !important}
+.focus-kicker{font-size:10px !important;padding:6px 9px !important;margin-bottom:7px !important}
+.focus-title-wrap h1{font-size:28px !important;line-height:1 !important;margin-bottom:5px !important}
+.focus-title-wrap p{font-size:14px !important;line-height:1.3 !important}
+
+.focus-app-shell{
+display:grid !important;
+grid-template-columns:1fr !important;
+grid-template-areas:"video" "timer" "list" "input" !important;
+gap:9px !important;
+margin-top:6px !important;
+}
+
+.focus-video-stage{padding:8px !important;border-radius:18px !important}
+.focus-video-top{margin-bottom:6px !important}
+.focus-video-top strong{font-size:13px !important}
+.focus-video-top span{font-size:11px !important}
+.focus-pill{font-size:11px !important;padding:6px 9px !important}
+.focus-screen{border-radius:15px !important;aspect-ratio:16/9 !important;max-height:205px !important}
+.focus-screen-placeholder{padding:10px !important}
+.focus-screen-placeholder strong{font-size:16px !important}
+.focus-screen-placeholder span{font-size:11px !important;line-height:1.3 !important;max-width:260px !important}
+.focus-orbit{width:52px !important;height:52px !important;border-width:4px !important;margin-bottom:7px !important}
+
+.focus-control-card{padding:9px !important;border-radius:18px !important}
+.focus-timer-circle{
+width:auto !important;height:auto !important;min-height:0 !important;
+border-radius:16px !important;border:1px solid rgba(148,163,184,.18) !important;
+padding:10px !important;margin:0 0 8px !important;
+}
+.focus-timer-circle::before{display:none !important}
+.focus-time{font-size:34px !important;line-height:1 !important}
+.focus-timer-circle small{font-size:11px !important;margin-top:4px !important}
+
+.focus-primary-actions{display:grid !important;grid-template-columns:1fr 1fr 1fr !important;gap:7px !important}
+.focus-btn{padding:10px 6px !important;font-size:10.5px !important;border-radius:12px !important}
+.focus-btn.main{grid-column:auto !important}
+
+.focus-library-card{padding:9px !important;border-radius:18px !important}
+.focus-library-head{margin-bottom:7px !important}
+.focus-library-head strong{font-size:13px !important}
+.focus-library-head span{font-size:10px !important}
+.focus-video-list{
+display:grid !important;
+grid-template-columns:1fr !important;
+gap:7px !important;
+max-height:150px !important;
+overflow-y:auto !important;
+padding-bottom:0 !important;
+}
+.focus-list-item{min-width:0 !important;padding:8px !important;border-radius:13px !important}
+.focus-list-icon{width:30px !important;height:30px !important;font-size:17px !important;border-radius:10px !important;flex-basis:30px !important}
+.focus-list-item b{font-size:12px !important}
+.focus-list-item small{font-size:10px !important}
+
+.focus-input-card{padding:9px !important;border-radius:18px !important}
+.focus-input-card label{font-size:12px !important;margin-bottom:6px !important}
+.focus-input-line{display:grid !important;grid-template-columns:1fr auto !important;gap:7px !important}
+.focus-input-line input{padding:9px !important;font-size:12px !important;border-radius:12px !important}
+.focus-input-line button{padding:9px 11px !important;font-size:12px !important;border-radius:12px !important}
+
+.footer{margin-top:12px !important;padding:12px !important;font-size:12px !important;border-radius:18px !important}
+.quick{height:60px !important}
+.quick a{font-size:10px !important}
+.quick a span{font-size:18px !important}
+}
+
+@media(max-width:390px){
+.focus-time{font-size:31px !important}
+.focus-btn{font-size:9.5px !important;padding:9px 4px !important}
+.focus-screen{max-height:188px !important}
+.nav a{font-size:10px !important;padding:6px 7px !important}
+}
+
+
+/* AÇIK TEMA OKUNURLUK DÜZELTMESİ */
+body.light-theme{background:#f4f7fb!important;color:#0f172a!important}
+body.light-theme::before{background:linear-gradient(180deg,#f8fafc,#e2e8f0)!important}
+body.light-theme::after{opacity:.12!important}
+body.light-theme .topbar,
+body.light-theme .card,
+body.light-theme .footer,
+body.light-theme .focus-video-stage,
+body.light-theme .focus-control-card,
+body.light-theme .focus-input-card,
+body.light-theme .focus-library-card,
+body.light-theme .focus-player-card,
+body.light-theme .focus-side-panel,
+body.light-theme .timer-card-mini{
+background:rgba(255,255,255,.90)!important;
+color:#0f172a!important;
+border-color:rgba(15,23,42,.14)!important;
+box-shadow:0 14px 30px rgba(15,23,42,.12)!important;
+}
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme .logo,
+body.light-theme .focus-time,
+body.light-theme .focus-video-top strong,
+body.light-theme .focus-library-head strong,
+body.light-theme .focus-list-item b{
+color:#0f172a!important;
+text-shadow:none!important;
+}
+body.light-theme p,
+body.light-theme .lead,
+body.light-theme .card p,
+body.light-theme .footer,
+body.light-theme .focus-title-wrap p,
+body.light-theme .focus-video-top span,
+body.light-theme .focus-library-head span,
+body.light-theme .focus-list-item small,
+body.light-theme .focus-timer-circle small{
+color:#334155!important;
+}
+body.light-theme .nav a,
+body.light-theme .quick,
+body.light-theme .quick a,
+body.light-theme .focus-list-item,
+body.light-theme .btn,
+body.light-theme .focus-btn{
+background:rgba(255,255,255,.94)!important;
+color:#0f172a!important;
+border-color:rgba(15,23,42,.16)!important;
+}
+body.light-theme .nav a.active,
+body.light-theme .nav a:hover,
+body.light-theme .quick a.active{
+color:#b45309!important;
+border-color:#f59e0b!important;
+}
+body.light-theme .btn.green,
+body.light-theme .focus-input-line button{
+background:#16a34a!important;
+color:white!important;
+}
+body.light-theme .btn.red,
+body.light-theme .focus-btn.danger{
+background:#dc2626!important;
+color:white!important;
+}
+body.light-theme .btn.gold,
+body.light-theme .focus-btn.main,
+body.light-theme .focus-pill,
+body.light-theme .badge,
+body.light-theme .focus-kicker{
+background:#facc15!important;
+color:#111827!important;
+border-color:#d97706!important;
+}
+body.light-theme .tag{
+background:#fee2e2!important;
+color:#7f1d1d!important;
+border-color:#fecaca!important;
+}
+body.light-theme input,
+body.light-theme .focus-input-line input,
+body.light-theme .input-row input{
+background:#ffffff!important;
+color:#0f172a!important;
+border-color:rgba(15,23,42,.18)!important;
+}
+body.light-theme input::placeholder{color:#64748b!important}
+body.light-theme .focus-screen,
+body.light-theme .video-player{
+background:#0f172a!important;
+}
+body.light-theme .focus-screen-placeholder{
+background:linear-gradient(135deg,rgba(248,250,252,.82),rgba(226,232,240,.78)),url("focus-room.png")!important;
+background-size:cover!important;
+background-position:center!important;
+}
+body.light-theme .focus-screen-placeholder strong{color:#0f172a!important}
+body.light-theme .focus-screen-placeholder span{color:#334155!important}
+body.light-theme .focus-timer-circle{
+background:#ffffff!important;
+border-color:rgba(15,23,42,.14)!important;
+box-shadow:0 8px 24px rgba(15,23,42,.10)!important;
+}
+.theme-toggle{
+position:fixed;right:18px;bottom:82px;z-index:120;width:48px;height:48px;
+border-radius:50%;border:1px solid rgba(250,204,21,.35);
+background:rgba(2,6,23,.86);color:#facc15;display:grid;place-items:center;
+font-size:22px;box-shadow:0 12px 28px rgba(0,0,0,.26);cursor:pointer;
+}
+body.light-theme .theme-toggle{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.16)!important}
+@media(max-width:900px){.theme-toggle{right:14px;bottom:70px;width:42px;height:42px;font-size:19px}}
+
+
+/* ===============================
+PREMIUM EFEKTLER GERİ YÜKLEME
+Mouse glow + 3D kartlar + dönen semboller + parıltılar
+=============================== */
+.mouse-glow{
+position:fixed;
+width:360px;
+height:360px;
+border-radius:50%;
+pointer-events:none;
+z-index:1;
+background:radial-gradient(circle,rgba(56,189,248,.18),rgba(250,204,21,.10),transparent 72%);
+filter:blur(22px);
+transform:translate(-50%,-50%);
+opacity:0;
+transition:opacity .35s ease;
+}
+
+.premium-symbols{
+position:fixed;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+z-index:0;
+opacity:.55;
+}
+
+.premium-symbol{
+position:absolute;
+font-family:Montserrat,Inter,sans-serif;
+font-weight:900;
+color:rgba(255,255,255,.18);
+text-shadow:0 0 18px rgba(56,189,248,.20);
+animation:symbolFloat 14s ease-in-out infinite;
+}
+
+.premium-symbol.gold{
+color:rgba(250,204,21,.28);
+text-shadow:0 0 20px rgba(250,204,21,.22);
+}
+
+.premium-symbol.blue{
+color:rgba(56,189,248,.26);
+text-shadow:0 0 20px rgba(56,189,248,.24);
+}
+
+.card,
+.focus-video-stage,
+.focus-control-card,
+.focus-input-card,
+.focus-library-card,
+.focus-player-card,
+.focus-side-panel,
+.video-card,
+.footer,
+.topbar{
+transform-style:preserve-3d;
+will-change:transform;
+transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+
+.card:hover,
+.focus-video-stage:hover,
+.focus-control-card:hover,
+.focus-input-card:hover,
+.focus-library-card:hover,
+.video-card:hover{
+box-shadow:0 22px 48px rgba(0,0,0,.36),0 0 26px rgba(56,189,248,.12);
+border-color:rgba(250,204,21,.30);
+}
+
+.btn,
+.focus-btn,
+.youtube-watch-btn,
+.focus-input-line button,
+.nav a,
+.quick a{
+transition:transform .22s ease, box-shadow .22s ease, filter .22s ease;
+}
+
+.btn:hover,
+.focus-btn:hover,
+.youtube-watch-btn:hover,
+.focus-input-line button:hover,
+.nav a:hover{
+transform:translateY(-2px) scale(1.03);
+filter:brightness(1.08);
+}
+
+.card::before,
+.focus-video-stage::before,
+.focus-control-card::before,
+.focus-input-card::before,
+.focus-library-card::before{
+content:"";
+position:absolute;
+inset:0;
+border-radius:inherit;
+background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.08) 40%,transparent 70%);
+transform:translateX(-120%);
+transition:transform .8s ease;
+pointer-events:none;
+}
+
+.card:hover::before,
+.focus-video-stage:hover::before,
+.focus-control-card:hover::before,
+.focus-input-card:hover::before,
+.focus-library-card:hover::before{
+transform:translateX(120%);
+}
+
+.profile-wrap::before{
+animation:spin 18s linear infinite !important;
+}
+
+.profile-wrap::after{
+animation:spin 12s linear infinite reverse !important;
+}
+
+.logo span,
+.gold{
+text-shadow:0 0 20px rgba(250,204,21,.35);
+}
+
+.badge,
+.focus-kicker,
+.focus-pill{
+box-shadow:0 0 22px rgba(250,204,21,.18);
+}
+
+@keyframes symbolFloat{
+0%,100%{transform:translateY(0) rotate(0deg);opacity:.32}
+50%{transform:translateY(-24px) rotate(5deg);opacity:.72}
+}
+
+body.light-theme .premium-symbol{
+color:rgba(15,23,42,.16);
+text-shadow:none;
+}
+
+body.light-theme .premium-symbol.gold{
+color:rgba(180,83,9,.20);
+}
+
+body.light-theme .premium-symbol.blue{
+color:rgba(2,132,199,.18);
+}
+
+body.light-theme .mouse-glow{
+background:radial-gradient(circle,rgba(56,189,248,.13),rgba(250,204,21,.10),transparent 72%);
+}
+
+@media(max-width:900px){
+.mouse-glow{display:none}
+.premium-symbols{opacity:.30}
+.premium-symbol{font-size:16px !important}
+.card:hover,
+.focus-video-stage:hover,
+.focus-control-card:hover,
+.focus-input-card:hover,
+.focus-library-card:hover,
+.video-card:hover{
+transform:none !important;
+}
+}
+
+
+/* FINAL FOCUS + TUTARLILIK KATMANI */
+.focus-studio-hero{padding:18px 0 14px}
+.focus-studio-badge{display:inline-flex;padding:10px 15px;border-radius:999px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#facc15;font-weight:900;font-size:13px;letter-spacing:.8px;margin-bottom:14px}
+.focus-studio-hero h1{font-family:Montserrat,Inter,sans-serif;font-size:42px;line-height:1.08;text-transform:none;max-width:880px;margin-bottom:12px}
+.focus-studio-hero p{color:#dbeafe;font-size:18px;line-height:1.6;max-width:860px}
+.focus-studio{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start;margin-top:16px}
+.focus-stage-card,.focus-control-studio,.focus-library-studio{border-radius:30px;background:rgba(2,6,23,.74);border:1px solid rgba(148,163,184,.20);box-shadow:0 20px 48px rgba(0,0,0,.34);backdrop-filter:blur(18px)}
+.focus-stage-card{padding:16px;overflow:hidden}
+.focus-stage-top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:12px}
+.focus-stage-top strong{display:block;font-size:18px;font-weight:900}.focus-stage-top span{display:block;font-size:13px;color:#94a3b8;margin-top:3px}
+.focus-session-pill{padding:10px 14px;border-radius:999px;background:#facc15;color:#020617;font-weight:900;white-space:nowrap}
+.focus-stage-screen{position:relative;aspect-ratio:16/9;border-radius:26px;overflow:hidden;background:#020617;border:1px solid rgba(148,163,184,.18);box-shadow:inset 0 0 42px rgba(0,0,0,.34)}
+.focus-stage-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:none;z-index:5}
+.focus-stage-screen.video-on iframe{display:block}.focus-stage-screen.video-on .focus-visual-layer{display:none}
+.focus-visual-layer{position:absolute;inset:0;overflow:hidden;background:linear-gradient(135deg,rgba(2,6,23,.76),rgba(2,6,23,.26)),url("focus-atmosphere.svg") center/cover no-repeat!important}
+.focus-visual-layer.bg-desk{background:radial-gradient(circle at 34% 50%,rgba(250,204,21,.24),transparent 28%),linear-gradient(135deg,rgba(2,6,23,.74),rgba(2,6,23,.30)),url("focus-atmosphere.svg") center/cover no-repeat!important}
+.focus-visual-layer.bg-space{background:radial-gradient(circle at 70% 20%,rgba(56,189,248,.26),transparent 22%),radial-gradient(circle at 30% 70%,rgba(168,85,247,.22),transparent 26%),linear-gradient(135deg,#020617,#111827)!important}
+.focus-visual-layer.bg-minimal{background:linear-gradient(135deg,rgba(15,23,42,.92),rgba(2,6,23,.96))!important}
+.focus-rain::before,.focus-rain::after{content:"";position:absolute;inset:-40px;background-image:linear-gradient(115deg,transparent 0 48%,rgba(125,211,252,.30) 49%,transparent 51%);background-size:28px 28px;animation:focusRain 1.1s linear infinite;opacity:.38}.focus-rain::after{animation-duration:1.6s;opacity:.18}
+.focus-quote{position:absolute;left:22px;bottom:20px;padding:11px 15px;border-radius:18px;background:rgba(2,6,23,.70);border:1px solid rgba(148,163,184,.22);color:#f8fafc;font-weight:900;font-size:15px}
+.focus-control-studio{display:grid;gap:14px;padding:14px;position:sticky;top:96px}
+.focus-timer-card,.focus-option-card{border-radius:24px;background:rgba(15,23,42,.66);border:1px solid rgba(148,163,184,.17);padding:15px}
+.focus-timer-ring{width:220px;height:220px;margin:0 auto 14px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(15,23,42,.96),rgba(2,6,23,.94));border:8px solid rgba(255,255,255,.07);position:relative;box-shadow:0 0 34px rgba(56,189,248,.14),inset 0 0 34px rgba(250,204,21,.08)}
+.focus-timer-ring::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:8px solid transparent;border-top-color:#facc15;border-right-color:#38bdf8;animation:focusStudioSpin 8s linear infinite}
+.focus-timer-value{font-family:Montserrat,Inter,sans-serif;font-size:42px;font-weight:900;position:relative;z-index:2}.focus-timer-status{font-size:12px;font-weight:800;color:#dbeafe;margin-top:6px;position:relative;z-index:2}
+.focus-main-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.studio-btn{border:0;cursor:pointer;border-radius:15px;padding:12px 13px;font-weight:900;color:white;background:rgba(2,6,23,.72);border:1px solid rgba(148,163,184,.18);transition:.22s}.studio-btn.primary{grid-column:1/-1;background:linear-gradient(180deg,#facc15,#eab308);color:#020617;box-shadow:0 0 22px rgba(250,204,21,.26)}.studio-btn.danger{background:linear-gradient(180deg,#ef4444,#b91c1c)}
+.focus-option-card h3{font-family:Montserrat,Inter,sans-serif;font-size:15px;margin-bottom:10px}.focus-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.focus-choice,.focus-bg-choice,.focus-sound-choice,.focus-view-choice{border:1px solid rgba(148,163,184,.18);border-radius:14px;padding:10px 9px;background:rgba(2,6,23,.62);color:#e5e7eb;font-weight:900;font-size:12px;cursor:pointer;transition:.2s}
+.focus-choice.active,.focus-bg-choice.active,.focus-sound-choice.active,.focus-view-choice.active{background:#facc15;color:#020617;border-color:#facc15;box-shadow:0 0 18px rgba(250,204,21,.24)}
+.focus-input-row{display:flex;gap:8px;margin-top:10px}.focus-input-row input{flex:1;min-width:0;border:1px solid rgba(148,163,184,.20);background:rgba(2,6,23,.70);color:white;border-radius:14px;padding:11px 12px;outline:none;font-size:12px}.focus-input-row button{border:0;border-radius:14px;padding:11px 12px;background:#25d366;color:white;font-weight:900;cursor:pointer}
+.focus-library-studio{margin-top:18px;padding:20px}.focus-library-title{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;margin-bottom:16px}.focus-library-title h2{font-family:Montserrat,Inter,sans-serif;font-size:26px}.focus-library-title p{color:#dbeafe;font-size:14px}.focus-mode-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.focus-mode-card{text-align:left;border:1px solid rgba(148,163,184,.18);border-radius:22px;padding:16px;background:rgba(15,23,42,.66);color:white;cursor:pointer;transition:.24s;position:relative;overflow:hidden}.focus-mode-card:hover,.focus-mode-card.active{border-color:#facc15;box-shadow:0 0 22px rgba(250,204,21,.18);transform:translateY(-2px)}.focus-mode-card.active::before{content:"";position:absolute;inset:1px;border-radius:20px;border:1px solid rgba(250,204,21,.72);pointer-events:none}.focus-mode-card span{display:grid;place-items:center;width:46px;height:46px;border-radius:16px;background:rgba(250,204,21,.12);font-size:25px;margin-bottom:12px}.focus-mode-card strong{display:block;font-size:15px;font-weight:900;margin-bottom:6px}.focus-mode-card small{display:block;color:#94a3b8;font-size:12px;line-height:1.4}
+.focus-timer-ring.view-compact,.focus-timer-ring.view-clean{width:auto;height:auto;border-radius:18px;padding:16px;border-width:1px}.focus-timer-ring.view-compact::before,.focus-timer-ring.view-clean::before{display:none}.focus-timer-ring.view-large{width:260px;height:260px}.focus-timer-ring.view-large .focus-timer-value{font-size:54px}
+.update-toast{position:fixed;left:16px;right:16px;bottom:86px;z-index:200;display:none;align-items:center;justify-content:space-between;gap:10px;background:rgba(2,6,23,.94);color:white;border:1px solid rgba(250,204,21,.35);border-radius:18px;padding:13px 14px;box-shadow:0 18px 42px rgba(0,0,0,.34)}.update-toast.show{display:flex}.update-toast button{border:0;border-radius:12px;background:#facc15;color:#020617;font-weight:900;padding:9px 12px}
+@keyframes focusRain{to{transform:translateY(28px)}}@keyframes focusStudioSpin{to{transform:rotate(360deg)}}
+body.light-theme .focus-stage-card,body.light-theme .focus-control-studio,body.light-theme .focus-library-studio,body.light-theme .focus-timer-card,body.light-theme .focus-option-card,body.light-theme .focus-mode-card{background:rgba(255,255,255,.90)!important;color:#0f172a!important;border-color:rgba(15,23,42,.14)!important}body.light-theme .focus-studio-hero p,body.light-theme .focus-stage-top span,body.light-theme .focus-library-title p,body.light-theme .focus-mode-card small,body.light-theme .focus-timer-status{color:#334155!important}body.light-theme .focus-choice,body.light-theme .focus-bg-choice,body.light-theme .focus-sound-choice,body.light-theme .focus-view-choice,body.light-theme .focus-input-row input{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.16)!important}body.light-theme .focus-timer-ring{background:#fff!important}body.light-theme .focus-visual-layer{background:linear-gradient(135deg,rgba(248,250,252,.70),rgba(226,232,240,.34)),url("focus-atmosphere.svg") center/cover no-repeat!important}
+@media(max-width:900px){.focus-studio-hero{padding:7px 0 8px}.focus-studio-badge{font-size:10px;padding:6px 9px;margin-bottom:8px}.focus-studio-hero h1{font-size:27px;line-height:1.05;margin-bottom:6px}.focus-studio-hero p{font-size:14px;line-height:1.35}.focus-studio{grid-template-columns:1fr;gap:10px;margin-top:8px}.focus-stage-card{padding:9px;border-radius:18px}.focus-stage-top{margin-bottom:7px}.focus-stage-top strong{font-size:13px}.focus-stage-top span{font-size:11px}.focus-session-pill{font-size:11px;padding:6px 9px}.focus-stage-screen{border-radius:15px;max-height:205px}.focus-quote{font-size:11px;padding:8px 10px;left:12px;bottom:12px}.focus-control-studio{position:relative;top:0;padding:9px;border-radius:18px;gap:9px}.focus-timer-card,.focus-option-card{padding:10px;border-radius:18px}.focus-timer-ring{width:auto;height:auto;border-radius:16px;padding:10px;border-width:1px;margin-bottom:8px}.focus-timer-ring::before{display:none}.focus-timer-value{font-size:34px;line-height:1}.focus-timer-status{font-size:11px}.focus-main-actions{grid-template-columns:1fr 1fr 1fr;gap:7px}.studio-btn,.focus-choice,.focus-bg-choice,.focus-sound-choice,.focus-view-choice{font-size:10.5px;padding:9px 6px;border-radius:12px}.studio-btn.primary{grid-column:auto}.focus-option-card h3{font-size:13px;margin-bottom:7px}.focus-choice-grid{gap:6px}.focus-input-row{display:grid;grid-template-columns:1fr auto;gap:6px}.focus-input-row input{font-size:11px;padding:9px}.focus-input-row button{font-size:11px;padding:9px 10px}.focus-library-studio{padding:10px;border-radius:18px;margin-top:10px}.focus-library-title{display:block;margin-bottom:9px}.focus-library-title h2{font-size:17px;margin-bottom:4px}.focus-library-title p{font-size:11px}.focus-mode-cards{display:flex;overflow-x:auto;gap:8px;padding:2px 2px 8px}.focus-mode-card{min-width:210px;padding:12px;border-radius:17px}.focus-mode-card.active::before{border-radius:15px}.focus-mode-card span{width:34px;height:34px;font-size:20px;border-radius:12px;margin-bottom:8px}.focus-mode-card strong{font-size:13px}.focus-mode-card small{font-size:10.5px}}
+
+
+/* FOCUS GÖRSEL + MP3 PREMIUM ENTEGRASYON */
+.focus-audio-visual-layout .focus-visual-layer{
+background-image:linear-gradient(135deg,rgba(2,6,23,.24),rgba(2,6,23,.04)),var(--focus-bg-img)!important;
+background-size:cover!important;
+background-position:center!important;
+}
+.focus-visual-layer.bg-desk{--focus-bg-img:url("focus-desk.png")}
+.focus-visual-layer.bg-rain{--focus-bg-img:url("focus-rain.png")}
+.focus-visual-layer.bg-space{--focus-bg-img:url("focus-space.png")}
+.focus-visual-layer.bg-minimal{--focus-bg-img:url("focus-minimal.png")}
+
+.focus-atmosphere-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.atmo-card{border:1px solid rgba(148,163,184,.18);background:rgba(15,23,42,.72);color:white;border-radius:18px;overflow:hidden;cursor:pointer;text-align:left;padding:0;transition:.22s}
+.atmo-card span{display:block;height:84px;background-size:cover;background-position:center}
+.atmo-card b{display:block;padding:9px 10px;font-size:12px}
+.atmo-card.active,.atmo-card:hover{border-color:#facc15;box-shadow:0 0 20px rgba(250,204,21,.18);transform:translateY(-2px)}
+.focus-audio-note{margin-top:10px;font-size:12px;line-height:1.45;color:#94a3b8}
+
+.focus-screen-timer{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:7;padding:10px 18px;border-radius:18px;background:rgba(2,6,23,.72);border:1px solid rgba(250,204,21,.35);box-shadow:0 0 30px rgba(250,204,21,.22);color:#fff;font-family:Montserrat,Inter,sans-serif;font-size:44px;font-weight:900;letter-spacing:-.04em;text-shadow:0 0 16px rgba(0,0,0,.55);pointer-events:none}
+.focus-window-rain{display:none;position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.focus-window-rain::before,.focus-window-rain::after{content:"";position:absolute;inset:-80px;background-image:linear-gradient(115deg,transparent 0 47%,rgba(125,211,252,.45) 49%,transparent 52%);background-size:24px 34px;animation:sezrWindowRain 850ms linear infinite;opacity:.46}
+.focus-window-rain::after{animation-duration:1300ms;opacity:.24;background-size:32px 42px}
+.focus-visual-layer.bg-rain .focus-window-rain,.focus-window-rain.active{display:block}
+.focus-stage-screen.video-on .focus-screen-timer,.focus-stage-screen.video-on .focus-window-rain{display:none!important}
+.focus-stage-screen.video-on .focus-visual-layer{display:none!important}
+.focus-visual-layer.bg-minimal .focus-screen-timer{background:rgba(255,255,255,.82);color:#0f172a;border-color:rgba(15,23,42,.18);text-shadow:none}
+.focus-visual-layer.bg-space .focus-screen-timer{border-color:rgba(168,85,247,.55);box-shadow:0 0 34px rgba(168,85,247,.34)}
+@keyframes sezrWindowRain{to{transform:translateY(42px)}}
+body.light-theme .atmo-card{background:rgba(255,255,255,.9)!important;color:#0f172a!important;border-color:rgba(15,23,42,.16)!important}
+body.light-theme .focus-audio-note{color:#334155!important}
+@media(max-width:900px){
+.focus-atmosphere-strip{display:flex;overflow-x:auto;gap:8px;padding-bottom:4px}
+.atmo-card{min-width:132px;border-radius:15px}
+.atmo-card span{height:70px}
+.atmo-card b{font-size:11px;padding:8px}
+.focus-screen-timer{font-size:30px;padding:8px 14px;border-radius:14px}
+.focus-stage-screen{min-height:210px}
+}
+@media(max-width:390px){.focus-screen-timer{font-size:26px}}
+
+
+/* FOCUS SADELEŞTİRME VE ÇERÇEVE DÜZELTME */
+.focus-clean-layout{
+display:grid;
+grid-template-columns:1fr 340px;
+gap:18px;
+align-items:start;
+margin-top:16px;
+}
+
+.focus-clean-panel{
+position:sticky;
+top:96px;
+}
+
+.focus-preset-section,
+.focus-youtube-card{
+margin-top:18px;
+border-radius:30px;
+background:rgba(2,6,23,.74);
+border:1px solid rgba(148,163,184,.20);
+box-shadow:0 20px 48px rgba(0,0,0,.34);
+backdrop-filter:blur(18px);
+padding:20px;
+}
+
+.focus-preset-cards{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+}
+
+.focus-youtube-card{
+display:grid;
+grid-template-columns:1fr 420px;
+gap:18px;
+align-items:center;
+}
+
+.focus-youtube-card h2{
+font-family:Montserrat,Inter,sans-serif;
+font-size:24px;
+margin-bottom:6px;
+}
+
+.focus-youtube-card p{
+color:#dbeafe;
+line-height:1.55;
+}
+
+.focus-mode-card{
+overflow:hidden !important;
+}
+
+.focus-mode-card.active::before{
+inset:6px !important;
+border-radius:16px !important;
+border:2px solid rgba(250,204,21,.78) !important;
+}
+
+.focus-mode-card.active{
+outline:none !important;
+}
+
+.focus-atmosphere-strip{
+display:none !important;
+}
+
+.focus-option-card:has(.focus-sound-choice){
+display:none !important;
+}
+
+.focus-stage-screen{
+overflow:hidden !important;
+}
+
+body.light-theme .focus-preset-section,
+body.light-theme .focus-youtube-card{
+background:rgba(255,255,255,.90)!important;
+color:#0f172a!important;
+border-color:rgba(15,23,42,.14)!important;
+}
+
+body.light-theme .focus-youtube-card p{
+color:#334155!important;
+}
+
+@media(max-width:900px){
+.focus-clean-layout{
+grid-template-columns:1fr;
+gap:10px;
+margin-top:8px;
+}
+
+.focus-clean-panel{
+position:relative;
+top:0;
+}
+
+.focus-preset-section,
+.focus-youtube-card{
+padding:10px;
+border-radius:18px;
+margin-top:10px;
+}
+
+.focus-preset-cards{
+display:flex;
+overflow-x:auto;
+gap:8px;
+padding:2px 2px 8px;
+}
+
+.focus-preset-cards .focus-mode-card{
+min-width:210px;
+}
+
+.focus-mode-card.active::before{
+inset:5px !important;
+border-radius:13px !important;
+}
+
+.focus-youtube-card{
+grid-template-columns:1fr;
+gap:10px;
+}
+
+.focus-youtube-card h2{
+font-size:17px;
+}
+
+.focus-youtube-card p{
+font-size:12px;
+}
+}
+
+
+/* FOCUS RESİM + SES DÜZELTME */
+.focus-screen-timer{display:none!important}
+.focus-visual-layer{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}
+.focus-visual-layer.bg-desk{background-image:linear-gradient(135deg,rgba(2,6,23,.28),rgba(2,6,23,.03)),url("focus-desk.png")!important}
+.focus-visual-layer.bg-rain{background-image:linear-gradient(135deg,rgba(2,6,23,.30),rgba(2,6,23,.05)),url("focus-rain.png")!important}
+.focus-visual-layer.bg-space{background-image:linear-gradient(135deg,rgba(2,6,23,.26),rgba(2,6,23,.04)),url("focus-space.png")!important}
+.focus-visual-layer.bg-minimal{background-image:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),url("focus-minimal.png")!important}
+.focus-mode-card[data-bg="desk"]{background-image:linear-gradient(180deg,rgba(2,6,23,.22),rgba(2,6,23,.78)),url("focus-desk.png")!important;background-size:cover!important;background-position:center!important}
+.focus-mode-card[data-bg="rain"]{background-image:linear-gradient(180deg,rgba(2,6,23,.22),rgba(2,6,23,.78)),url("focus-rain.png")!important;background-size:cover!important;background-position:center!important}
+.focus-mode-card[data-bg="space"]{background-image:linear-gradient(180deg,rgba(2,6,23,.22),rgba(2,6,23,.78)),url("focus-space.png")!important;background-size:cover!important;background-position:center!important}
+.focus-mode-card[data-bg="minimal"]{background-image:linear-gradient(180deg,rgba(255,255,255,.10),rgba(15,23,42,.78)),url("focus-minimal.png")!important;background-size:cover!important;background-position:center!important}
+.focus-mode-card strong,.focus-mode-card small,.focus-mode-card span{position:relative;z-index:2;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+.focus-mode-card span{background:rgba(250,204,21,.20)!important;backdrop-filter:blur(8px)}
+body.light-theme .focus-mode-card strong,body.light-theme .focus-mode-card small{color:#fff!important}
+body.light-theme .focus-visual-layer.bg-minimal{background-image:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.04)),url("focus-minimal.png")!important}
+
+/* FOCUS TAM EKRAN + GÖRSEL SIĞDIRMA + İKON DÜZENİ */
+.focus-stage-screen{aspect-ratio:16/9!important;max-height:none!important}
+.focus-visual-layer{background-size:cover!important;background-position:center center!important}
+.focus-stage-card{overflow:hidden!important}
+.focus-stage-top{display:grid!important;grid-template-columns:1fr auto auto;align-items:center;gap:10px}
+.focus-fullscreen-btn{border:1px solid rgba(148,163,184,.22);border-radius:999px;background:rgba(15,23,42,.78);color:#facc15;font-weight:900;padding:9px 12px;cursor:pointer;white-space:nowrap}
+.focus-stage-card.focus-fullscreen-active{position:fixed!important;inset:0!important;z-index:9999!important;border-radius:0!important;padding:0!important;margin:0!important;background:#020617!important;display:flex!important;flex-direction:column!important}
+.focus-stage-card.focus-fullscreen-active .focus-stage-top{position:absolute;left:14px;right:14px;top:14px;z-index:30;display:flex!important;justify-content:space-between;align-items:flex-start;background:rgba(2,6,23,.58);border:1px solid rgba(148,163,184,.18);backdrop-filter:blur(12px);border-radius:18px;padding:10px 12px}
+.focus-stage-card.focus-fullscreen-active .focus-session-pill{display:none!important}
+.focus-stage-card.focus-fullscreen-active .focus-stage-screen{height:100vh!important;width:100vw!important;aspect-ratio:auto!important;border-radius:0!important;border:0!important}
+.focus-stage-card.focus-fullscreen-active::after{content:attr(data-fullscreen-time);position:absolute;right:18px;bottom:18px;z-index:25;padding:10px 16px;border-radius:18px;background:rgba(2,6,23,.74);border:1px solid rgba(250,204,21,.35);color:#fff;font-family:Montserrat,Inter,sans-serif;font-size:26px;font-weight:900;box-shadow:0 0 24px rgba(0,0,0,.28)}
+body.focus-lock-scroll{overflow:hidden!important}
+body.light-theme .focus-fullscreen-btn{background:#fff!important;color:#0f172a!important;border-color:rgba(15,23,42,.18)!important}
+@media(max-width:900px){.focus-stage-top{grid-template-columns:1fr auto}.focus-fullscreen-btn{font-size:11px;padding:7px 9px}.focus-stage-card.focus-fullscreen-active::after{right:12px;bottom:12px;font-size:21px;padding:8px 13px}.focus-stage-card.focus-fullscreen-active .focus-quote{left:12px!important;bottom:12px!important;max-width:55%}}
+
+
+/* İKON + TAM EKRAN DİKEY/YATAY GÖRSEL DÜZELTME */
+.focus-stage-card.focus-fullscreen-active .focus-stage-screen{
+background:#020617 !important;
+overflow:hidden !important;
+}
+
+.focus-stage-card.focus-fullscreen-active .focus-visual-layer{
+background-repeat:no-repeat !important;
+background-position:center center !important;
+}
+
+/* Yatay telefonda sinematik tam ekran */
+@media (orientation: landscape){
+  .focus-stage-card.focus-fullscreen-active .focus-visual-layer{
+    background-size:cover !important;
+  }
+}
+
+/* Dikey telefonda görsel kırpılmasın, tamamı görünsün */
+@media (orientation: portrait){
+  .focus-stage-card.focus-fullscreen-active .focus-visual-layer{
+    background-size:contain !important;
+    background-color:#020617 !important;
+  }
+
+  .focus-stage-card.focus-fullscreen-active .focus-stage-screen{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+
+  .focus-stage-card.focus-fullscreen-active::after{
+    right:12px !important;
+    bottom:calc(82px + env(safe-area-inset-bottom)) !important;
+  }
+
+  .focus-stage-card.focus-fullscreen-active .focus-quote{
+    left:12px !important;
+    bottom:calc(82px + env(safe-area-inset-bottom)) !important;
+    max-width:58% !important;
+  }
+}
+
+/* PWA modunda alt güvenli boşluk */
+@supports (padding: max(0px)){
+  .focus-stage-card.focus-fullscreen-active{
+    padding-bottom:env(safe-area-inset-bottom) !important;
+  }
+}
+
+
+/* FOCUS GÖRSEL TAM SIĞDIRMA + TAM EKRAN BİLGİ ÇUBUĞU OTOMATİK GİZLEME */
+.focus-stage-screen{
+background:#020617 !important;
+}
+
+.focus-visual-layer{
+background-repeat:no-repeat !important;
+}
+
+/* Normal sayfada görselin tamamı görünsün */
+@media(max-width:900px){
+  .focus-stage-screen{
+    aspect-ratio:16/10 !important;
+    min-height:260px !important;
+  }
+
+  .focus-visual-layer{
+    background-size:contain !important;
+    background-position:center center !important;
+    background-color:#020617 !important;
+  }
+
+  .focus-quote{
+    left:14px !important;
+    bottom:14px !important;
+    max-width:72% !important;
+  }
+}
+
+/* Masaüstünde geniş alanı doldursun ama merkeze göre kırpsın */
+@media(min-width:901px){
+  .focus-visual-layer{
+    background-size:cover !important;
+    background-position:center center !important;
+  }
+}
+
+/* Tam ekranda üst bilgi çubuğu birkaç saniye sonra kaybolur */
+.focus-stage-card.focus-fullscreen-active .focus-stage-top{
+transition:opacity .35s ease, transform .35s ease !important;
+}
+
+.focus-stage-card.focus-fullscreen-active .focus-stage-top.fs-ui-hidden{
+opacity:0 !important;
+pointer-events:none !important;
+transform:translateY(-18px) !important;
+}
+
+/* Tam ekrandayken dokununca/mouse hareket edince tekrar görünür */
+.focus-stage-card.focus-fullscreen-active .focus-stage-top.fs-ui-visible{
+opacity:1 !important;
+pointer-events:auto !important;
+transform:translateY(0) !important;
+}
+
+/* Dikey tam ekran: görsel tamamı sığsın */
+@media(orientation:portrait){
+  .focus-stage-card.focus-fullscreen-active .focus-visual-layer{
+    background-size:contain !important;
+    background-position:center center !important;
+    background-color:#020617 !important;
+  }
+}
+
+/* Yatay tam ekran: sinematik dolsun */
+@media(orientation:landscape){
+  .focus-stage-card.focus-fullscreen-active .focus-visual-layer{
+    background-size:cover !important;
+    background-position:center center !important;
+  }
+}
+
+/* Tam ekranda söz kutusu dikkat dağıtmasın */
+.focus-stage-card.focus-fullscreen-active .focus-quote{
+opacity:.72 !important;
+}
+
+.focus-stage-card.focus-fullscreen-active.fs-clean .focus-quote{
+opacity:0 !important;
+}
+
+
+/* GENEL SON TARAMA VE DENGE DÜZELTMELERİ */
+:root{--sezr-gold:#facc15;--sezr-blue:#38bdf8}
+img,iframe,video{max-width:100%}
+.nav a,.quick a,.btn,.studio-btn{user-select:none}
+.card,.focus-stage-card,.focus-control-studio,.focus-preset-section,.focus-youtube-card{isolation:isolate}
+@media(max-width:900px){
+  h1{font-size:clamp(28px,8vw,38px)!important;line-height:1.08!important}
+  .lead,.focus-studio-hero p{font-size:15px!important}
+  .container{max-width:100%;overflow-x:hidden}
+  .nav{justify-content:center}
+}
+.focus-stage-screen{background:#020617!important}
+@media(max-width:900px){
+  .focus-stage-screen{aspect-ratio:16/10!important;min-height:240px!important;max-height:330px!important}
+  .focus-visual-layer{background-size:cover!important;background-position:center center!important}
+}
+@media(max-width:430px){.focus-stage-screen{min-height:220px!important}}
+.focus-stage-card.focus-fullscreen-active .focus-stage-screen{height:100vh!important;width:100vw!important}
+@media(orientation:portrait){
+  .focus-stage-card.focus-fullscreen-active .focus-visual-layer{background-size:contain!important;background-position:center!important;background-color:#020617!important}
+}
+@media(orientation:landscape){
+  .focus-stage-card.focus-fullscreen-active .focus-visual-layer{background-size:cover!important;background-position:center!important}
+}
+.focus-mode-card{overflow:hidden!important}
+.focus-mode-card.active::before{inset:6px!important;border-radius:16px!important;box-sizing:border-box!important}
+.focus-input-row input{min-width:0}
+@media(max-width:900px){
+  .focus-input-row{grid-template-columns:1fr auto!important}
+  .focus-input-row input{width:100%}
+}
+body.light-theme .focus-youtube-card,body.light-theme .focus-preset-section{background:rgba(255,255,255,.92)!important}
+body.light-theme .focus-youtube-card p,body.light-theme .focus-library-title p{color:#334155!important}
+.quick{padding-bottom:env(safe-area-inset-bottom)}
+body{padding-bottom:env(safe-area-inset-bottom)}

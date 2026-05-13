@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+<linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0%" stop-color="#06111f"/>
+<stop offset="52%" stop-color="#0f172a"/>
+<stop offset="100%" stop-color="#1c1208"/>
+</linearGradient>
+<radialGradient id="lamp" cx="50%" cy="50%">
+<stop offset="0%" stop-color="#facc15" stop-opacity=".58"/>
+<stop offset="100%" stop-color="#facc15" stop-opacity="0"/>
+</radialGradient>
+<radialGradient id="screen" cx="50%" cy="50%">
+<stop offset="0%" stop-color="#38bdf8" stop-opacity=".22"/>
+<stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+</radialGradient>
+</defs>
+
+<rect width="1600" height="900" fill="url(#bg)"/>
+<rect x="0" y="0" width="1600" height="900" fill="#020617" opacity=".18"/>
+
+<rect x="910" y="70" width="530" height="390" rx="26" fill="#0b1220" stroke="#243244" stroke-width="5"/>
+<rect x="940" y="95" width="470" height="340" rx="18" fill="#08111f"/>
+<circle cx="1260" cy="160" r="72" fill="#fde68a"/>
+<circle cx="1260" cy="160" r="150" fill="url(#lamp)"/>
+
+<g opacity=".55" stroke="#60a5fa" stroke-width="3">
+<path d="M955 115 L970 210"/>
+<path d="M1000 95 L1015 250"/>
+<path d="M1055 120 L1068 300"/>
+<path d="M1120 98 L1138 270"/>
+<path d="M1195 116 L1210 310"/>
+<path d="M1320 100 L1338 290"/>
+<path d="M1380 120 L1392 330"/>
+</g>
+
+<rect x="190" y="560" width="860" height="34" rx="17" fill="#2a1f16"/>
+<rect x="150" y="590" width="930" height="110" rx="24" fill="#1f1712"/>
+<rect x="360" y="390" width="285" height="180" rx="22" fill="#0b1220" stroke="#334155" stroke-width="4"/>
+<rect x="390" y="420" width="225" height="118" rx="16" fill="#38bdf8" opacity=".15"/>
+<circle cx="505" cy="482" r="120" fill="url(#screen)"/>
+
+<ellipse cx="760" cy="530" rx="140" ry="75" fill="#0a0a0c"/>
+<rect x="655" y="470" width="210" height="150" rx="70" fill="#111115"/>
+<circle cx="760" cy="405" r="76" fill="#111115"/>
+<path d="M680 580 C620 620,590 675,585 720" stroke="#111115" stroke-width="52" fill="none" stroke-linecap="round"/>
+<path d="M835 580 C900 620,930 675,940 720" stroke="#111115" stroke-width="52" fill="none" stroke-linecap="round"/>
+
+<circle cx="1180" cy="640" r="56" fill="#e7e5e4"/>
+<rect x="1130" y="638" width="100" height="58" rx="20" fill="#f5f5f4"/>
+<path d="M1225 648 q48 0 48 32 q0 32 -48 32" fill="none" stroke="#f5f5f4" stroke-width="14"/>
+<path d="M1170 575 q24 -42 0 -88" stroke="#cbd5e1" stroke-width="8" fill="none" opacity=".55"/>
+<path d="M1205 565 q24 -42 0 -88" stroke="#cbd5e1" stroke-width="8" fill="none" opacity=".42"/>
+<path d="M1240 575 q24 -42 0 -88" stroke="#cbd5e1" stroke-width="8" fill="none" opacity=".32"/>
+
+<circle cx="120" cy="110" r="2" fill="#fff" opacity=".7"/>
+<circle cx="250" cy="190" r="2" fill="#fff" opacity=".6"/>
+<circle cx="520" cy="120" r="2" fill="#fff" opacity=".45"/>
+<circle cx="1480" cy="90" r="2" fill="#fff" opacity=".6"/>
+
+<text x="80" y="100" fill="#facc15" font-family="Arial" font-size="42" font-weight="700">SezR Focus Room</text>
+<text x="80" y="152" fill="#dbeafe" font-family="Arial" font-size="26">Ders çalış, odaklan, güçlen.</text>
+</svg>
