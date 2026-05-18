@@ -1,0 +1,303 @@
+/* SezR Matematik Premium V2 Düzeltme Paketi */
+
+/* Genel sayfa hissi */
+body{
+  background:#020617!important;
+}
+
+.container{
+  max-width:1280px!important;
+}
+
+/* Hero alanını düzelt */
+.hero.page-hero{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 420px!important;
+  align-items:center!important;
+  gap:44px!important;
+  padding:44px!important;
+  min-height:620px!important;
+  overflow:hidden!important;
+}
+
+/* Başlık çok ezilmesin */
+.hero.page-hero h1{
+  max-width:760px!important;
+  font-size:clamp(42px,5.2vw,72px)!important;
+  line-height:1.03!important;
+  margin-bottom:22px!important;
+}
+
+.hero.page-hero .lead{
+  max-width:680px!important;
+  font-size:clamp(18px,1.6vw,22px)!important;
+  line-height:1.65!important;
+}
+
+/* Profil eski dairesel yapıdan çıkıp premium kart olsun */
+.hero.page-hero .hero-visual{
+  min-height:500px!important;
+  display:grid!important;
+  place-items:center!important;
+  position:relative!important;
+}
+
+.hero.page-hero .profile-wrap{
+  width:min(360px,88vw)!important;
+  height:auto!important;
+  aspect-ratio:auto!important;
+  position:relative!important;
+  display:block!important;
+  padding:18px!important;
+  border-radius:38px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.06))!important;
+  border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:0 32px 90px rgba(0,0,0,.42),0 0 45px rgba(56,189,248,.18)!important;
+  backdrop-filter:blur(20px)!important;
+  transform:rotate(1.5deg)!important;
+  z-index:5!important;
+}
+
+.hero.page-hero .profile-wrap::before{
+  content:""!important;
+  position:absolute!important;
+  inset:-18px!important;
+  border-radius:48px!important;
+  background:conic-gradient(from 0deg,transparent,rgba(56,189,248,.75),rgba(250,204,21,.85),rgba(37,211,102,.45),transparent)!important;
+  filter:blur(10px)!important;
+  opacity:.55!important;
+  z-index:-1!important;
+  animation:premiumSpin 18s linear infinite!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+.hero.page-hero .profile-wrap::after{
+  content:"SezR Matematik"!important;
+  position:absolute!important;
+  left:28px!important;
+  right:28px!important;
+  bottom:28px!important;
+  padding:13px 14px!important;
+  border-radius:20px!important;
+  background:rgba(2,6,23,.72)!important;
+  border:1px solid rgba(255,255,255,.18)!important;
+  backdrop-filter:blur(14px)!important;
+  color:white!important;
+  font:900 18px/1.2 Montserrat,Inter,sans-serif!important;
+  text-align:left!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.28)!important;
+  z-index:8!important;
+  animation:none!important;
+}
+
+.hero.page-hero .profile-wrap img{
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:1/1.08!important;
+  display:block!important;
+  object-fit:cover!important;
+  object-position:center top!important;
+  border-radius:28px!important;
+  border:4px solid rgba(255,255,255,.92)!important;
+  position:relative!important;
+  z-index:2!important;
+  background:#020617!important;
+}
+
+/* istatistikler düzgün kutu olsun */
+.hero-stats{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin-top:28px!important;
+  max-width:780px!important;
+}
+
+.hero-stats .stat{
+  padding:16px 18px!important;
+  border-radius:22px!important;
+  background:rgba(255,255,255,.085)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 16px 34px rgba(0,0,0,.22)!important;
+  backdrop-filter:blur(14px)!important;
+}
+
+.hero-stats .stat b{
+  display:block!important;
+  font-size:24px!important;
+  line-height:1!important;
+  color:#facc15!important;
+  margin-bottom:7px!important;
+}
+
+.hero-stats .stat span{
+  display:block!important;
+  color:#cbd5e1!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+}
+
+/* eski float yazılar profil üstüne binmesin */
+.hero.page-hero .float-card{
+  z-index:7!important;
+}
+
+.hero.page-hero .float-card.one{
+  left:auto!important;
+  right:270px!important;
+  top:52px!important;
+}
+
+.hero.page-hero .float-card.two{
+  right:0!important;
+  bottom:82px!important;
+}
+
+.hero.page-hero .float-card.three{
+  left:auto!important;
+  right:210px!important;
+  bottom:34px!important;
+}
+
+/* Neden SezR ve kartlar daha dolu dursun */
+.section-title{
+  margin-top:48px!important;
+  margin-bottom:24px!important;
+  align-items:center!important;
+}
+
+.card{
+  min-height:230px!important;
+  padding:30px!important;
+}
+
+.card h3,
+.card h2{
+  font-size:clamp(22px,2vw,30px)!important;
+  margin-bottom:14px!important;
+}
+
+.card p{
+  font-size:17px!important;
+  line-height:1.72!important;
+}
+
+/* Çalışma sistemi sade yazı kalmasın */
+.premium-mini-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:18px!important;
+  margin-top:22px!important;
+}
+
+.premium-mini{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:190px!important;
+  padding:26px!important;
+  border-radius:30px!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.055))!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.26)!important;
+  backdrop-filter:blur(18px)!important;
+}
+
+.premium-mini::before{
+  content:""!important;
+  position:absolute!important;
+  right:-50px!important;
+  bottom:-70px!important;
+  width:170px!important;
+  height:170px!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(250,204,21,.18),transparent 68%)!important;
+}
+
+.premium-mini h3{
+  position:relative!important;
+  z-index:2!important;
+  font-family:Montserrat,Inter,sans-serif!important;
+  font-size:24px!important;
+  margin-bottom:12px!important;
+}
+
+.premium-mini p{
+  position:relative!important;
+  z-index:2!important;
+  color:#dbeafe!important;
+  font-size:16.5px!important;
+  line-height:1.65!important;
+}
+
+/* WhatsApp butonu sağda fazla dev görünmesin */
+.sezr-wa-float{
+  padding:13px 18px!important;
+  right:20px!important;
+}
+
+/* Mobil */
+@media(max-width:980px){
+  .hero.page-hero{
+    grid-template-columns:1fr!important;
+    text-align:center!important;
+    padding:28px 20px!important;
+    min-height:auto!important;
+  }
+
+  .hero.page-hero h1,
+  .hero.page-hero .lead{
+    margin-left:auto!important;
+    margin-right:auto!important;
+  }
+
+  .hero.page-hero .profile-wrap{
+    width:min(310px,86vw)!important;
+    transform:none!important;
+  }
+
+  .hero.page-hero .float-card{
+    display:none!important;
+  }
+
+  .hero-stats,
+  .premium-mini-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  .card{
+    min-height:auto!important;
+  }
+}
+
+@media(max-width:560px){
+  .hero.page-hero{
+    padding:22px 14px!important;
+    border-radius:24px!important;
+  }
+
+  .hero.page-hero h1{
+    font-size:35px!important;
+  }
+
+  .hero.page-hero .lead{
+    font-size:16.5px!important;
+  }
+
+  .hero.page-hero .profile-wrap{
+    width:min(270px,84vw)!important;
+  }
+
+  .hero-stats .stat{
+    text-align:left!important;
+  }
+
+  .premium-mini{
+    min-height:auto!important;
+  }
+}
+
+@keyframes premiumSpin{
+  to{transform:rotate(360deg)}
+}
