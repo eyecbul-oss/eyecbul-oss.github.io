@@ -1,0 +1,147 @@
+
+/* SezR Premium V3 */
+
+.topbar{
+backdrop-filter:blur(26px)!important;
+background:linear-gradient(90deg,rgba(2,6,23,.92),rgba(2,6,23,.74))!important;
+border:1px solid rgba(250,204,21,.12)!important;
+}
+
+.logo{
+position:relative!important;
+}
+
+.logo::after{
+content:"PREMIUM";
+position:absolute;
+right:-78px;
+top:8px;
+font-size:11px;
+letter-spacing:2px;
+padding:5px 9px;
+border-radius:999px;
+background:rgba(250,204,21,.14);
+border:1px solid rgba(250,204,21,.28);
+color:#facc15;
+font-weight:900;
+}
+
+.hero.page-hero{
+position:relative!important;
+}
+
+.hero.page-hero::after{
+content:"";
+position:absolute;
+inset:0;
+background:
+radial-gradient(circle at 20% 20%,rgba(56,189,248,.10),transparent 30%),
+radial-gradient(circle at 80% 20%,rgba(250,204,21,.12),transparent 30%);
+pointer-events:none;
+}
+
+.badge{
+animation:badgePulse 3s ease-in-out infinite!important;
+}
+
+@keyframes badgePulse{
+50%{
+transform:scale(1.04);
+box-shadow:0 0 30px rgba(250,204,21,.22);
+}
+}
+
+.card,
+.premium-mini{
+transition:.35s!important;
+}
+
+.card:hover,
+.premium-mini:hover{
+transform:translateY(-10px) scale(1.02)!important;
+}
+
+.card h3,
+.premium-mini h3{
+position:relative!important;
+padding-bottom:10px!important;
+}
+
+.card h3::after,
+.premium-mini h3::after{
+content:"";
+position:absolute;
+left:0;
+bottom:0;
+width:70px;
+height:3px;
+border-radius:999px;
+background:linear-gradient(90deg,#facc15,#38bdf8);
+}
+
+.section-title{
+display:flex!important;
+align-items:center!important;
+gap:18px!important;
+}
+
+.section-title::after{
+content:"";
+height:2px;
+flex:1;
+background:linear-gradient(90deg,#facc15,transparent);
+opacity:.8;
+}
+
+.hero-stats .stat{
+position:relative!important;
+overflow:hidden!important;
+}
+
+.hero-stats .stat::before{
+content:"";
+position:absolute;
+right:-35px;
+bottom:-35px;
+width:90px;
+height:90px;
+border-radius:50%;
+background:radial-gradient(circle,rgba(250,204,21,.18),transparent 70%);
+}
+
+.footer{
+background:linear-gradient(180deg,rgba(2,6,23,.95),rgba(15,23,42,.92))!important;
+border:1px solid rgba(250,204,21,.12)!important;
+}
+
+.footer::before{
+content:"SezR";
+display:block;
+font-size:34px;
+font-weight:900;
+font-family:Montserrat,sans-serif;
+color:rgba(250,204,21,.14);
+margin-bottom:10px;
+}
+
+.sezr-wa-float{
+animation:waFloat 2.8s ease-in-out infinite!important;
+}
+
+@keyframes waFloat{
+50%{
+transform:translateY(-6px) scale(1.03);
+}
+}
+
+@media(max-width:900px){
+
+.logo::after{
+display:none!important;
+}
+
+.section-title{
+font-size:34px!important;
+}
+
+}
