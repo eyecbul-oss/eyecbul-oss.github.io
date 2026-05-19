@@ -464,7 +464,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if(ts.total > 0 && min===0) return "Görevlerin hazır. Şimdi 25 dakika sadece ilk göreve odaklan.";
     if(min<60){
       if(avgMin && min < avgMin) return "Ritmi korumak için bir seans daha ekle.";
-      return "Bir kısa seans daha ekleyebilirsin.";
+      return "";
     }
     return "Günlük hedef tamamlandı.";
   }

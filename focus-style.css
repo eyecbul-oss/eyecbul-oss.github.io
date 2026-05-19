@@ -1560,3 +1560,28 @@ body.compact-ui .exam-panel{
 .target-options button{
   font-family:Inter,sans-serif!important;
 }
+
+
+/* ULTRA CLEAN */
+*:not(input):not(textarea){
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+input,
+textarea{
+  -webkit-user-select:text!important;
+  user-select:text!important;
+}
+
+/* cleaner cards */
+.panel{
+  overflow:hidden;
+}
+
+/* remove empty duplicated hints */
+.target-advice:empty,
+.study-intensity:empty,
+.weekly-insight:empty{
+  display:none!important;
+}
