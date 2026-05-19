@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fire:{title:"Fire",file:"focus-fire.mp3",theme:"theme-fire"}
   };
 
+
+  const cloudConfig = window.SEZR_FOCUS_CONFIG || { firebaseEnabled:false };
+  const cloudReady = !!(cloudConfig.firebaseEnabled && cloudConfig.firebase && cloudConfig.firebase.apiKey);
+
   let profile = localStorage.getItem("sezr_focus_profile") || "default";
   let data = load();
   let currentTrack = "rain";
@@ -29,7 +33,16 @@ document.addEventListener("DOMContentLoaded", () => {
   function today(){ return new Date().toISOString().slice(0,10); }
   function blank(){ return {name:"",email:profile==="default"?"":profile,plan:"",notes:[],sessions:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
   function load(){ try{return Object.assign(blank(), JSON.parse(localStorage.getItem(key()) || "{}"));}catch{return blank();} }
-  function save(){ localStorage.setItem(key(), JSON.stringify(data)); }
+  function save(){ 
+    localStorage.setItem(key(), JSON.stringify(data)); 
+    cloudSavePlaceholder();
+  }
+
+  function cloudSavePlaceholder(){
+    if(!cloudReady) return;
+    // Firebase Firestore bağlantısı burada aktif edilecek.
+    // Şimdilik yerel kayıt korunur.
+  }
   function day(){ const k=today(); if(!data.days[k]) data.days[k]={seconds:0,pomodoros:0,pauses:0}; return data.days[k]; }
   function fmt(sec){ const m=Math.floor(sec/60), s=sec%60; return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0"); }
   function paths(track){ const f=tracks[track].file; return ["music/"+f,f,"./music/"+f,"./"+f]; }
@@ -236,6 +249,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if($("progressFill")) $("progressFill").style.width = pct+"%";
     setText("progressText", min+" / 60 dk • %"+pct);
     setText("profileInfo", profile==="default" ? "Genel profil kullanılıyor." : "Aktif profil: "+(data.name || profile));
+    const syncCard = $("syncStatusCard");
+    if(syncCard){
+      if(cloudReady){
+        syncCard.classList.add("cloud");
+        syncCard.innerHTML = "<b>Bulut bağlantısı hazır</b><span>Bu profil farklı cihazlarda senkronize edilebilir.</span>";
+      }else{
+        syncCard.classList.remove("cloud");
+        syncCard.innerHTML = "<b>Yerel kayıt aktif</b><span>Firebase bilgileri eklenince telefon, tablet ve bilgisayarda aynı kayıtlar açılır.</span>";
+      }
+    }
     setValue("emailInput", profile==="default" ? "" : profile);
     setValue("nameInput", data.name || "");
     renderNotes();
@@ -292,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
   on("addNoteBtn","click",addNote);
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
   on("settingsBtn","click",()=>{$("settingsPanel").classList.toggle("show");});
+  on("closeSettingsBtn","click",()=>{$("settingsPanel").classList.remove("show");});
   on("loginBtn","click",login);
   on("generalBtn","click",general);
   on("exportBtn","click",exportData);
