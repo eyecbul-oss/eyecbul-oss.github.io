@@ -161,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }catch(e){ showMessage(errorText(e),"error"); }
   }
 
-
   function continueGuest(){
     guestMode = true;
     user = null;
@@ -436,7 +435,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return count;
   }
 
-
   function getTasks(){
     data.tasks = Array.isArray(data.tasks) ? data.tasks : [];
     return data.tasks;
@@ -461,17 +459,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const ts = taskStats();
     const rhythmStats = typeof getLast7Stats === "function" ? getLast7Stats() : [];
     const avgMin = rhythmStats.length ? Math.round(rhythmStats.reduce((s,x)=>s+x.minutes,0)/7) : 0;
-    if(ts.total === 0 && min===0) return "Bugün için birkaç küçük görev ekle, sonra 25 dakikalık seansla başla.";
-    if(ts.total > 0 && ts.done === ts.total) return "Bugünkü görevler tamamlandı. İstersen kısa tekrar veya yanlış analiziyle günü kapat.";
+    if(ts.total === 0 && min===0) return "Bir görev ekleyip odak seansına başla.";
+    if(ts.total > 0 && ts.done === ts.total) return "Bugünkü görevler tamamlandı.";
     if(ts.total > 0 && min===0) return "Görevlerin hazır. Şimdi 25 dakika sadece ilk göreve odaklan.";
     if(min<60){
-      if(avgMin && min < avgMin) return "Başlangıç yapıldı. Haftalık ortalamanı yakalamak için bir seans daha ekle.";
-      return "Başlangıç yapıldı. Günlük hedefe ve sınav tempona yaklaşmak için bir seans daha ekleyebilirsin.";
+      if(avgMin && min < avgMin) return "Ritmi korumak için bir seans daha ekle.";
+      return "Bir kısa seans daha ekleyebilirsin.";
     }
-    return "Günlük hedef tamamlandı. Şimdi tekrar veya yanlış analizi daha verimli olur.";
+    return "Günlük hedef tamamlandı.";
   }
-
-
 
   let latestExamSuggestion = "20 soru çöz ve yanlışlarını işaretle.";
 
@@ -701,7 +697,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-
   async function changeDailyTarget(value){
     data.dailyTarget = Number(value || 60);
     await saveCloud();
@@ -714,7 +709,6 @@ document.addEventListener("DOMContentLoaded", () => {
     await saveCloud();
     render();
   }
-
 
   function getLast7Stats(){
     const arr = [];
@@ -768,11 +762,10 @@ document.addEventListener("DOMContentLoaded", () => {
     textEl.textContent = msg;
     if(statusLine){
       statusLine.textContent = total > 0
-        ? "Çalışma ritmi aktif: haftalık verilerine göre yorum yapıyor."
+        ? "Çalışma ritmi aktif."
         : "Çalışma ritmi için önce birkaç seans tamamla.";
     }
   }
-
 
   const motivationQuotes = [
     "Sadece bu seans.",
@@ -843,6 +836,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 18000);
   }
 
+  function applyCompactMode(){
+    document.body.classList.toggle("compact-ui", localStorage.getItem("sezr_compact_ui") === "1");
+    if($("compactModeBtn")){
+      $("compactModeBtn").textContent = document.body.classList.contains("compact-ui") ? "Standart Görünüm" : "Sade Görünüm";
+    }
+  }
+
+  function toggleCompactMode(){
+    const next = localStorage.getItem("sezr_compact_ui") === "1" ? "0" : "1";
+    localStorage.setItem("sezr_compact_ui", next);
+    applyCompactMode();
+  }
+
   function render(){
     const d=day();
     const min=Math.floor(d.seconds/60);
@@ -852,10 +858,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if($("overlayTimer")) $("overlayTimer").textContent = fmt(remaining);
     if($("overlayStatus")) $("overlayStatus").textContent = isBreak ? "Mola" : (running ? "Çalışıyor" : "Hazır");
     if($("overlaySubStatus")){
-      if(isBreak) $("overlaySubStatus").textContent = "Mola penceresinden bitirince kaldığın süreden devam edersin.";
-      else if(running) $("overlaySubStatus").textContent = "Odak modundasın. Sadece bu seans.";
+      if(isBreak) $("overlaySubStatus").textContent = "Moladan sonra kaldığın yerden devam.";
+      else if(running) $("overlaySubStatus").textContent = "Odak modundasın.";
       else if(remaining < totalSeconds) $("overlaySubStatus").textContent = "Kaldığın yerden devam edebilirsin.";
       else $("overlaySubStatus").textContent = "Başlamak için hazır.";
+    }
+    if($("overlayTaskProgress")){
+      const ts = taskStats();
+      $("overlayTaskProgress").textContent = "Görev: " + ts.done + "/" + ts.total + " • %" + ts.pct;
     }
     $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
     $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
@@ -905,7 +915,6 @@ renderNotes();
     renderSessions();
   }
 
-
   function buildTodaySummary(){
     const d = day();
     const min = Math.floor((d.seconds || 0) / 60);
@@ -949,7 +958,6 @@ renderNotes();
       box.appendChild(div);
     });
   }
-
 
   function renderDailyTasks(){
     const box = $("taskListMain");
@@ -1109,6 +1117,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
   $("settingsBtn").onclick=()=>$("settingsPanel").classList.toggle("show");
   $("closeSettingsBtn").onclick=()=>$("settingsPanel").classList.remove("show");
+  if($("compactModeBtn")) $("compactModeBtn").onclick=toggleCompactMode;
   $("logoutBtn").onclick=()=>{
     localStorage.removeItem("sezr_guest_mode");
     guestMode = false;
@@ -1146,7 +1155,6 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
     }
   });
 
-
   window.addEventListener("beforeunload", () => {
     saveLocal();
   });
@@ -1181,6 +1189,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
     if($("examCountdownPanel")) renderExamCountdown(); 
   }, 1000);
 
+  applyCompactMode();
   ambience();
   setTrack("rain");
   document.querySelector(".music-panel").classList.add("paused");

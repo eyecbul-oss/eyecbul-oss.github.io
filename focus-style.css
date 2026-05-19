@@ -33,7 +33,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   display:none!important;
 }
 
-
 /* V-clean copy: remove technical-looking account text */
 .auth-note,
 .cloud-note,
@@ -59,7 +58,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
 }
 
 .auth-submit:disabled{opacity:.65;cursor:not-allowed;filter:grayscale(.2)}
-
 
 .complete-plan{
   width:100%;
@@ -138,7 +136,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   .weekly-head{display:grid}
 }
 
-
 .target-row{
   display:flex;
   justify-content:space-between;
@@ -187,7 +184,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   font-weight:900;
   font-size:13px;
 }
-
 
 .today-summary{
   margin-top:24px;
@@ -244,7 +240,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   }
 }
 
-
 .plan-actions{
   display:grid;
   grid-template-columns:1.4fr .9fr;
@@ -286,7 +281,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   .plan-actions{grid-template-columns:1fr}
 }
 
-
 .subject-tags{
   display:flex;
   flex-wrap:wrap;
@@ -322,7 +316,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   font-size:12px;
   margin-top:4px;
 }
-
 
 .exam-panel{
   margin-top:24px;
@@ -434,7 +427,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   }
 }
 
-
 .exam-mini-plan{
   margin-top:12px;
   display:grid;
@@ -474,7 +466,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   }
 }
 
-
 .study-intensity{
   margin-top:12px;
   padding:14px;
@@ -495,7 +486,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   border-color:rgba(249,115,22,.22);
   color:#fed7aa;
 }
-
 
 .rhythm-card{
   margin-top:24px;
@@ -548,7 +538,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
     grid-template-columns:1fr;
   }
 }
-
 
 /* V10 daily multi tasks and countdown */
 .subject-tags{display:none!important}
@@ -659,7 +648,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   }
 }
 
-
 /* Stable login flow */
 .guest-btn{
   width:100%;
@@ -683,7 +671,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
 .auth-message.error{
   color:#fecaca;
 }
-
 
 .profile-chip{
   padding:10px 13px;
@@ -725,7 +712,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   .profile-chip{order:2}
   .start-hint{display:grid}
 }
-
 
 .task-actions{
   display:grid;
@@ -786,7 +772,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   .task-actions{grid-template-columns:1fr}
 }
 
-
 .stats-grid{
   grid-template-columns:repeat(5,1fr);
 }
@@ -814,7 +799,6 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
     grid-template-columns:1fr;
   }
 }
-
 
 /* Fullscreen Focus Mode */
 .primary-actions{
@@ -948,7 +932,6 @@ body.overlay-open{
   }
 }
 
-
 /* Fullscreen v2 polish */
 .primary-actions button,
 .mode-row button,
@@ -1052,7 +1035,6 @@ body.overlay-open{
     font-size:14px;
   }
 }
-
 
 /* Unified button sizing */
 .task-actions button,
@@ -1173,7 +1155,6 @@ body.overlay-open{
     grid-template-columns:1fr!important;
   }
 }
-
 
 /* FINAL POLISH */
 .today-summary,
@@ -1310,7 +1291,6 @@ button{
   }
 }
 
-
 /* FINAL V2: modern target selector */
 .modern-target-row{
   align-items:flex-start!important;
@@ -1405,5 +1385,133 @@ button{
   }
   .target-options button:last-child{
     grid-column:1/-1;
+  }
+}
+
+/* FINAL V3 usability polish */
+.overlay-task-progress{
+  margin-top:12px;
+  padding:10px 16px;
+  border-radius:999px;
+  background:rgba(34,197,94,.10);
+  border:1px solid rgba(34,197,94,.20);
+  color:#dcfce7;
+  font-weight:900;
+}
+body.compact-ui .weekly-panel,
+body.compact-ui .rhythm-card,
+body.compact-ui .music-panel{
+  display:none!important;
+}
+body.compact-ui .hero{
+  min-height:auto;
+  padding-bottom:10px;
+}
+body.compact-ui .bottom-grid{
+  grid-template-columns:1fr 1fr;
+}
+body.compact-ui .exam-panel{
+  margin-top:18px;
+}
+.logout-clean + .logout-clean{
+  margin-top:10px;
+}
+@media(max-width:780px){
+  body.compact-ui .bottom-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* FINAL RELEASE BUTTON POLISH */
+.primary-actions{
+  display:grid!important;
+  grid-template-columns:1.5fr .9fr .7fr!important;
+  gap:12px!important;
+}
+
+.primary-actions button{
+  position:relative;
+  overflow:hidden;
+  min-height:58px!important;
+  border-radius:20px!important;
+  font-size:15px!important;
+  font-weight:900!important;
+  letter-spacing:.01em;
+}
+
+.primary-actions button:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.10),transparent);
+  transform:translateX(-120%);
+  transition:transform .55s ease;
+}
+
+.primary-actions button:hover:before{
+  transform:translateX(120%);
+}
+
+.icon-btn{
+  min-width:64px;
+  font-size:24px!important;
+  padding:0!important;
+}
+
+#mainToggleBtn{
+  background:linear-gradient(180deg,#22c55e,#16a34a)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  box-shadow:0 18px 40px rgba(34,197,94,.18);
+}
+
+#mainToggleBtn.running{
+  background:linear-gradient(180deg,#f97316,#ea580c)!important;
+  box-shadow:0 18px 40px rgba(249,115,22,.20);
+}
+
+#resetBtn{
+  background:rgba(15,23,42,.92)!important;
+}
+
+#fullscreenBtn{
+  background:linear-gradient(180deg,#1e293b,#0f172a)!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+}
+
+/* cleaner texts */
+.target-advice,
+.weekly-insight,
+.rhythm-status-line,
+.exam-advice,
+.study-intensity{
+  line-height:1.5;
+  font-size:13.5px!important;
+}
+
+/* avoid visual clutter */
+.overlay-sub-status{
+  opacity:.9;
+}
+
+.overlay-task-progress{
+  margin-top:10px!important;
+  padding:8px 14px!important;
+  font-size:14px!important;
+}
+
+/* final spacing cleanup */
+.panel,
+.exam-panel,
+.rhythm-card,
+.weekly-panel{
+  overflow:hidden;
+}
+
+@media(max-width:720px){
+  .primary-actions{
+    grid-template-columns:1fr 1fr 72px!important;
+  }
+  .icon-btn{
+    min-width:72px;
   }
 }
