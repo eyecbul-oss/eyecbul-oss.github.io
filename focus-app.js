@@ -386,14 +386,25 @@ document.addEventListener("DOMContentLoaded", () => {
   $("closeSettingsBtn").onclick=()=>$("settingsPanel").classList.remove("show");
   $("saveProfileBtn").onclick=saveProfile;
   $("logoutBtn").onclick=()=>auth.signOut();
-  $("exportBtn").onclick=exportData;
-  $("importBtn").onclick=importData;
-  $("resetDataBtn").onclick=resetData;
   $("closeModalBtn").onclick=()=>{ $("successModal").classList.remove("show"); reset(); };
   document.querySelectorAll(".mode").forEach(btn=>btn.onclick=()=>{ document.querySelectorAll(".mode").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); focusSeconds=Number(btn.dataset.min)*60; totalSeconds=focusSeconds; remaining=totalSeconds; reset(); });
   document.querySelectorAll(".break-btn").forEach(btn=>btn.onclick=()=>startBreak(Number(btn.dataset.break)));
   document.querySelectorAll(".track").forEach(btn=>btn.onclick=()=>{ const was=isAudioPlaying; pauseAudio(); setTrack(btn.dataset.track); if(was) playAudio(); });
   document.addEventListener("keydown",e=>{ const tag=(e.target.tagName||"").toLowerCase(); if(tag==="input"||tag==="textarea")return; if(e.code==="Space"){e.preventDefault();toggle();} });
+
+  document.addEventListener("click", (e) => {
+    const panel = $("settingsPanel");
+    const btn = $("settingsBtn");
+    if(!panel || !btn) return;
+    const isOpen = panel.classList.contains("show");
+    if(!isOpen) return;
+    const clickedInsidePanel = panel.contains(e.target);
+    const clickedSettingsBtn = btn.contains(e.target);
+    if(!clickedInsidePanel && !clickedSettingsBtn){
+      panel.classList.remove("show");
+    }
+  });
+
 
   window.addEventListener("beforeunload", () => {
     saveLocal();
