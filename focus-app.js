@@ -332,3 +332,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelector(".music-panel").classList.add("paused");
   render();
 });
+
+  // Firebase hazır mı kontrol
+  setTimeout(()=>{
+    const card = document.getElementById("syncStatusCard");
+    if(window.sezrFirebaseReady && card){
+      card.classList.add("cloud");
+      card.innerHTML = "<b>Bulut sistemi aktif</b><span>Bu hesap farklı cihazlarda kullanılmaya hazır.</span>";
+    }
+  },1200);
+

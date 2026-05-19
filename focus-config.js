@@ -1,25 +1,14 @@
-/*
-  SezR Focus Cloud Config
-
-  Şimdilik boş bırakıldı.
-  Firebase projesi oluşturunca aşağıdaki alanları dolduracağız.
-
-  Doldurulunca sistem:
-  - öğrenci mailiyle giriş
-  - telefon / tablet / bilgisayar senkronizasyonu
-  - bulutta istatistik kaydı
-  için hazır olacak.
-*/
 
 window.SEZR_FOCUS_CONFIG = {
-  firebaseEnabled: false,
+  firebaseEnabled: true,
 
   firebase: {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
+    apiKey: "AIzaSyCWH-I-qn8-prKwAY_BUDA-Pt3IsY50JLs",
+    authDomain: "sezrmatematik-f7c5b.firebaseapp.com",
+    projectId: "sezrmatematik-f7c5b",
+    storageBucket: "sezrmatematik-f7c5b.firebasestorage.app",
+    messagingSenderId: "600885583173",
+    appId: "1:600885583173:web:ac2ee7ee9b963c0237322c",
+    measurementId: "G-QGKXPLW7TS"
   }
 };

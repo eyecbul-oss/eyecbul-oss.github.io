@@ -185,6 +185,24 @@
   </div>
 
   <script src="focus-config.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const config = window.SEZR_FOCUS_CONFIG;
+
+    if(config && config.firebaseEnabled){
+      const app = initializeApp(config.firebase);
+      window.sezrFirebaseAuth = getAuth(app);
+      window.sezrFirebaseDB = getFirestore(app);
+      window.sezrFirebaseReady = true;
+      console.log("Firebase hazır");
+    }else{
+      window.sezrFirebaseReady = false;
+    }
+  </script>
+
   <script src="focus-app.js"></script>
 </body>
 </html>
