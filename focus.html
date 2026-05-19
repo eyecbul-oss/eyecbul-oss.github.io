@@ -40,7 +40,6 @@
 
   <div class="hero-actions">
     <button class="btn primary" id="startMainBtn">Başlat</button>
-    <button class="btn gold" id="audioMainBtn">Sesi Başlat</button>
     <button class="btn" id="cleanBtn">Clean Mode</button>
   </div>
 
@@ -76,13 +75,8 @@
   </div>
 
   <div class="goal-row">
-    <input id="goalInput" placeholder="Bugünkü hedefin">
-    <button id="saveGoalBtn">Kaydet</button>
-  </div>
-
-  <div class="goal-row">
-    <input id="subjectInput" placeholder="Bugünkü konu: Problemler, Türev...">
-    <button id="saveSubjectBtn">Konu Kaydet</button>
+    <input id="planInput" placeholder="Bugünkü çalışma planın: Örn. Problemlerden 20 soru">
+    <button id="savePlanBtn">Kaydet</button>
   </div>
 
   <div class="ai-box" id="aiAdvice">Bugün için 25 dakikalık bir başlangıç yeterli.</div>
@@ -100,9 +94,8 @@
     <span></span><span></span><span></span><span></span><span></span>
   </div>
 
-  <div class="player-controls">
-    <button id="playBtn">▶️ Çal</button>
-    <button id="stopBtn">⏹ Durdur</button>
+  <div class="player-controls compact-player">
+    <button id="playBtn">▶️ Ses</button>
     <input id="volumeRange" type="range" min="0" max="100" value="60">
     <b id="volumeText">60%</b>
   </div>
@@ -146,13 +139,14 @@
   <div id="todayPlan" class="plan-box">Konu yazınca plan hazırlanır.</div>
 </section>
 
-<h2 class="section-title">Görevler</h2>
+<h2 class="section-title">Çalışma Planı ve Seanslar</h2>
 <section class="task-grid">
   <div class="panel">
-    <h2>Bugünkü Görevler</h2>
+    <h2>Bugünkü Plan</h2>
+    <p id="planDisplay">Plan yazılmadı.</p>
     <div class="task-input">
-      <input id="taskInput" placeholder="Örn. 20 problem çöz">
-      <button id="addTaskBtn">Ekle</button>
+      <input id="quickNoteInput" placeholder="Kısa not ekle: Zorlandığım soru tipi...">
+      <button id="addNoteBtn">Not Ekle</button>
     </div>
     <div id="taskList" class="task-list"></div>
   </div>

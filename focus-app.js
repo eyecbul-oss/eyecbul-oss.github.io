@@ -113,7 +113,7 @@ function tryPlay(paths,index=0){
     $("trackStatus").textContent = "Ses bulunamadı. MP3 dosyaları music klasöründe mi?";
     isAudioPlaying = false;
     $("playerCard").classList.add("paused");
-    $("playBtn").textContent = "▶️ Çal";
+    $("playBtn").textContent = "▶️ Ses";
     return;
   }
   audio.src = paths[index];
@@ -122,7 +122,7 @@ function tryPlay(paths,index=0){
   audio.play().then(() => {
     isAudioPlaying = true;
     $("playerCard").classList.remove("paused");
-    $("playBtn").textContent = "⏸ Duraklat";
+    $("playBtn").textContent = "⏸ Ses";
     $("trackStatus").textContent = "Çalıyor";
   }).catch(() => tryPlay(paths,index+1));
 }
@@ -132,7 +132,7 @@ function playAudio(){
     $("audio").pause();
     isAudioPlaying = false;
     $("playerCard").classList.add("paused");
-    $("playBtn").textContent = "▶️ Çal";
+    $("playBtn").textContent = "▶️ Ses";
     $("trackStatus").textContent = "Duraklatıldı";
     return;
   }
@@ -144,9 +144,35 @@ function stopAudio(){
   $("audio").currentTime = 0;
   isAudioPlaying = false;
   $("playerCard").classList.add("paused");
-  $("playBtn").textContent = "▶️ Çal";
+  $("playBtn").textContent = "▶️ Ses";
   $("trackStatus").textContent = "Durduruldu";
 }
+
+
+function pauseAudioOnly(){
+  if(isAudioPlaying){
+    $("audio").pause();
+    isAudioPlaying = false;
+    $("playerCard").classList.add("paused");
+    $("playBtn").textContent = "▶️ Ses";
+    $("trackStatus").textContent = "Ses duraklatıldı";
+  }
+}
+
+function updateStartButtons(){
+  const label = running ? "Duraklat" : (remaining < totalSeconds ? "Devam Et" : "Başlat");
+  ["startBtn","startMainBtn"].forEach(id => {
+    const el = $(id);
+    if(!el) return;
+    el.textContent = label;
+    el.classList.toggle("running", running);
+  });
+}
+
+function toggleFocus(){
+  running ? pauseFocus() : startFocus();
+}
+
 
 function updateTimerUI(){
   $("timerText").textContent = formatTimer(remaining);
@@ -159,6 +185,7 @@ function startFocus(){
   if(!isAudioPlaying) playAudio();
   running = true;
   $("timerStatus").textContent = isBreak ? "Mola" : "Çalışıyor";
+  updateStartButtons();
   renderSmartStatus();
   timerId = setInterval(() => {
     if(remaining > 0){
@@ -178,9 +205,11 @@ function pauseFocus(){
   if(!running) return;
   clearInterval(timerId);
   running = false;
+  pauseAudioOnly();
   ensureToday().pauses++;
   saveData();
   $("timerStatus").textContent = "Duraklatıldı";
+  updateStartButtons();
   renderAll();
 }
 
@@ -189,12 +218,14 @@ function resetFocus(){
   running = false;
   remaining = totalSeconds;
   $("timerStatus").textContent = "Hazır";
+  updateStartButtons();
   renderAll();
 }
 
 function finishFocus(){
   clearInterval(timerId);
   running = false;
+  updateStartButtons();
 
   if(isBreak){
     isBreak = false;
@@ -234,18 +265,15 @@ function setMode(min,btn){
   resetFocus();
 }
 
-function setGoal(){
-  data.goal = $("goalInput").value.trim();
+function setPlan(){
+  const value = $("planInput") ? $("planInput").value.trim() : "";
+  data.goal = value;
+  const day = ensureToday();
+  day.subject = value;
   saveData();
   renderAll();
 }
 
-function setSubject(){
-  const day = ensureToday();
-  day.subject = $("subjectInput").value.trim();
-  saveData();
-  renderAll();
-}
 
 function aiAdvice(){
   const day = ensureToday();
@@ -261,11 +289,12 @@ function aiAdvice(){
   return "Çalışma düzenin oluşuyor. Aynı saatte tekrar etmek alışkanlığı güçlendirir.";
 }
 
-function addTask(){
-  const text = $("taskInput").value.trim();
+function addNote(){
+  const input = $("quickNoteInput");
+  const text = input ? input.value.trim() : "";
   if(!text) return;
   data.tasks.push({text,done:false});
-  $("taskInput").value = "";
+  input.value = "";
   saveData();
   renderTasks();
 }
@@ -326,7 +355,7 @@ function renderProfile(){
   $("settingsInfo").textContent = activeProfile === "default" ? "Genel profil kullanılıyor." : "Aktif profil: " + label;
   $("emailInput").value = activeProfile === "default" ? "" : activeProfile;
   $("nameInput").value = data.name || "";
-  $("goalInput").value = data.goal || "";
+  if($("planInput")) $("planInput").value = data.goal || "";
   renderProfileList();
 }
 
@@ -425,15 +454,15 @@ function renderWeekly(){
 
 function renderPlan(){
   const box = $("todayPlan");
-  const subjectInput = $("subjectInput");
-  if(!box || !subjectInput) return;
+  const display = $("planDisplay");
+  if(!box) return;
   const day = ensureToday();
-  const subject = day.subject || "";
-  subjectInput.value = subject;
+  const subject = data.goal || day.subject || "";
+  if(display) display.textContent = subject ? subject : "Plan yazılmadı.";
   const min = Math.floor(day.seconds/60);
-  let a = subject ? `${subject} konusuna 25 dk odaklan.` : "Bugünkü konuyu yaz.";
+  let a = subject ? subject + " için 25 dk odaklan." : "Bugünkü çalışma planını yaz.";
   let b = "5 dk mola ver.";
-  let c = "10 soru çöz veya yanlış analizi yap.";
+  let c = "10 soru çöz veya kısa tekrar yap.";
   if(min >= 60){ a="Ana çalışma tamamlandı."; b="Kısa tekrar yap."; c="Yanlış analiziyle günü kapat."; }
   box.innerHTML = `<div class="plan-step"><b>1</b><span>${a}</span></div><div class="plan-step"><b>2</b><span>${b}</span></div><div class="plan-step"><b>3</b><span>${c}</span></div>`;
 }
@@ -471,6 +500,7 @@ function renderSmartStatus(){
 
 function renderAll(){
   updateTimerUI();
+  updateStartButtons();
   $("aiAdvice").textContent = aiAdvice();
   renderStats();
   renderSmartStatus();
@@ -511,16 +541,14 @@ function buildAmbience(){
 }
 
 function bind(){
-  on("startMainBtn","click",startFocus);
-  on("startBtn","click",startFocus);
+  on("startMainBtn","click",toggleFocus);
+  on("startBtn","click",toggleFocus);
   on("pauseBtn","click",pauseFocus);
   on("resetBtn","click",resetFocus);
   $("rainBtn").addEventListener("click",() => {
     $("ambientLayer").style.display = $("ambientLayer").style.display === "none" ? "block" : "none";
   });
-  on("audioMainBtn","click",playAudio);
   on("playBtn","click",playAudio);
-  on("stopBtn","click",stopAudio);
   on("volumeRange","input",e => {
     if($("audio")) $("audio").volume = e.target.value/100;
     if($("volumeText")) $("volumeText").textContent = e.target.value + "%";
@@ -535,9 +563,9 @@ function bind(){
     loadTrack(card.dataset.track);
     if(wasPlaying) playAudio();
   }));
-  on("saveGoalBtn","click",setGoal);
-  on("saveSubjectBtn","click",setSubject);
-  on("addTaskBtn","click",addTask);
+  on("savePlanBtn","click",setPlan);
+  
+  on("addNoteBtn","click",addNote);
   on("settingsBtn","click",() => $("settingsPanel").classList.toggle("show"));
   on("loginBtn","click",loginProfile);
   on("logoutBtn","click",logoutProfile);
@@ -547,7 +575,13 @@ function bind(){
   on("cleanBtn","click",() => document.body.classList.toggle("clean"));
   on("closeSuccessBtn","click",() => { $("successModal").classList.remove("show"); resetFocus(); });
   document.addEventListener("keydown",e => {
-    if(e.code === "Space"){ e.preventDefault(); running ? pauseFocus() : startFocus(); }
+    const tag = (e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "");
+    const typing = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+    if(typing) return;
+    if(e.code === "Space"){
+      e.preventDefault();
+      toggleFocus();
+    }
   });
 }
 
