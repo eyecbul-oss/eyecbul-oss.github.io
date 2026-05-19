@@ -285,3 +285,40 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
 @media(max-width:620px){
   .plan-actions{grid-template-columns:1fr}
 }
+
+
+.subject-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+.subject-tag{
+  min-height:38px;
+  padding:0 12px;
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.18);
+  background:rgba(250,204,21,.08);
+  color:#fde68a;
+  font-weight:900;
+  cursor:pointer;
+}
+.subject-tag:hover{
+  background:rgba(250,204,21,.15);
+}
+.next-suggestion{
+  margin-top:10px;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(56,189,248,.09);
+  border:1px solid rgba(56,189,248,.18);
+  color:#dbeafe;
+  font-weight:900;
+  line-height:1.45;
+}
+.note-date{
+  display:block;
+  color:#94a3b8;
+  font-size:12px;
+  margin-top:4px;
+}

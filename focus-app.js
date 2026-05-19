@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let saveTimer = null;
   let saveBusy = false;
 
-  function blank(){ return {name:"",email:"",plan:"",dailyTarget:60,notes:[],sessions:[],planHistory:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
+  function blank(){ return {name:"",email:"",plan:"",selectedSubject:"",dailyTarget:60,notes:[],sessions:[],planHistory:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
   function localKey(){ return user ? "sezr_focus_cloud_" + user.uid : "sezr_focus_guest"; }
   function saveLocal(){ localStorage.setItem(localKey(), JSON.stringify(data)); }
   function loadLocal(){ try{return Object.assign(blank(), JSON.parse(localStorage.getItem(localKey()) || "{}"));}catch{return blank();} }
@@ -445,7 +445,8 @@ renderNotes();
     const min = Math.floor((d.seconds || 0) / 60);
     const plan = data.plan ? data.plan : "Plan yazılmadı";
     const done = d.planDone ? "tamamlandı" : "devam ediyor";
-    return "Plan: " + plan + " • Durum: " + done + " • Süre: " + min + " dk • Pomodoro: " + (d.pomodoros || 0);
+    const subject = data.selectedSubject ? " • Konu: " + data.selectedSubject : "";
+    return "Plan: " + plan + subject + " • Durum: " + done + " • Süre: " + min + " dk • Pomodoro: " + (d.pomodoros || 0);
   }
 
   function renderTodaySummary(){
@@ -485,10 +486,13 @@ renderNotes();
     const box=$("noteList"); box.innerHTML="";
     if(data.notes.length===0){ box.innerHTML='<div class="list-item">Henüz not yok.</div>'; return; }
     data.notes.forEach((n,i)=>{
+      const noteText = typeof n === "string" ? n : n.text;
+      const noteDate = typeof n === "string" ? "" : (n.date + " • " + n.time);
       const div=document.createElement("div");
       div.className="list-item";
-      div.innerHTML="<span></span><button>Sil</button>";
-      div.querySelector("span").textContent=n;
+      div.innerHTML="<span><span class='note-text'></span><span class='note-date'></span></span><button>Sil</button>";
+      div.querySelector(".note-text").textContent=noteText;
+      div.querySelector(".note-date").textContent=noteDate;
       div.querySelector("button").onclick=async()=>{data.notes.splice(i,1);await saveCloud();render();};
       box.appendChild(div);
     });
@@ -515,6 +519,30 @@ renderNotes();
     render();
   }
 
+  async function applySubject(subject){
+    data.selectedSubject = subject;
+    const current = $("planInput").value.trim();
+    if(!current){
+      $("planInput").value = subject + " çalışması";
+    }else if(!current.toLowerCase().includes(subject.toLowerCase())){
+      $("planInput").value = subject + " • " + current;
+    }
+    await savePlan();
+  }
+
+  function renderNextSuggestion(){
+    const el = $("nextSuggestion");
+    if(!el) return;
+    const d = day();
+    const min = Math.floor((d.seconds || 0) / 60);
+    let text = "Sonraki adım: İlk seansı başlat.";
+    if(data.plan && min === 0) text = "Sonraki adım: Bu plana 25 dakika odaklan.";
+    if(min > 0 && min < Number(data.dailyTarget || 60)) text = "Sonraki adım: Bir seans daha ekle veya 10 soru çöz.";
+    if(d.planDone) text = "Sonraki adım: Yanlış analizi veya kısa tekrar yap.";
+    if(min >= Number(data.dailyTarget || 60)) text = "Sonraki adım: Yeni konuya geçmeden önce günü özetle.";
+    el.textContent = text;
+  }
+
   async function savePlan(){ 
     const newPlan = $("planInput").value.trim();
     if(newPlan && newPlan !== data.plan){
@@ -531,7 +559,14 @@ renderNotes();
     await saveCloud(); 
     render(); 
   }
-  async function addNote(){ const v=$("noteInput").value.trim(); if(!v)return; data.notes.push(v); $("noteInput").value=""; await saveCloud(); render(); }
+  async function addNote(){ 
+    const v=$("noteInput").value.trim(); 
+    if(!v)return; 
+    data.notes.push({text:v,date:new Date().toLocaleDateString("tr-TR"),time:new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}); 
+    $("noteInput").value=""; 
+    await saveCloud(); 
+    render(); 
+  }
 function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navigator.clipboard.writeText(raw).then(()=>alert("Yedek kodu kopyalandı.")):prompt("Yedek kodu:",raw); }
   async function importData(){ const raw=prompt("Yedek kodunu yapıştır:"); if(!raw)return; try{data=Object.assign(blank(),JSON.parse(raw)); await saveCloud(); render(); alert("Yedek yüklendi.");}catch{alert("Yedek okunamadı.");} }
   async function resetData(){ if(!confirm("Bu hesabın verileri silinsin mi?"))return; data=blank(); data.email=user.email; await saveCloud(); reset(); render(); }
@@ -553,6 +588,9 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("completePlanBtn").onclick=togglePlanDone;
   if($("clearPlanBtn")) $("clearPlanBtn").onclick=clearPlan;
   if($("dailyTargetSelect")) $("dailyTargetSelect").onchange=changeDailyTarget;
+  document.querySelectorAll(".subject-tag").forEach(btn=>{
+    btn.onclick=()=>applySubject(btn.dataset.subject);
+  });
   $("addNoteBtn").onclick=addNote;
   if($("copySummaryBtn")) $("copySummaryBtn").onclick=copyTodaySummary;
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
