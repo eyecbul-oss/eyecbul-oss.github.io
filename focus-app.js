@@ -1,7 +1,12 @@
-(() => {
+document.addEventListener("DOMContentLoaded", () => {
 "use strict";
 
 const $ = (id) => document.getElementById(id);
+function on(id,event,fn){
+  const el = $(id);
+  if(el) el.addEventListener(event,fn);
+}
+
 
 const tracks = {
   rain:  { title:"Rain Focus", file:"focus-rain.mp3",  theme:"theme-rain" },
@@ -449,19 +454,19 @@ function buildAmbience(){
 }
 
 function bind(){
-  $("startMainBtn").addEventListener("click",startFocus);
-  $("startBtn").addEventListener("click",startFocus);
-  $("pauseBtn").addEventListener("click",pauseFocus);
-  $("resetBtn").addEventListener("click",resetFocus);
+  on("startMainBtn","click",startFocus);
+  on("startBtn","click",startFocus);
+  on("pauseBtn","click",pauseFocus);
+  on("resetBtn","click",resetFocus);
   $("rainBtn").addEventListener("click",() => {
     $("ambientLayer").style.display = $("ambientLayer").style.display === "none" ? "block" : "none";
   });
-  $("audioMainBtn").addEventListener("click",playAudio);
-  $("playBtn").addEventListener("click",playAudio);
-  $("stopBtn").addEventListener("click",stopAudio);
-  $("volumeRange").addEventListener("input",e => {
-    $("audio").volume = e.target.value/100;
-    $("volumeText").textContent = e.target.value + "%";
+  on("audioMainBtn","click",playAudio);
+  on("playBtn","click",playAudio);
+  on("stopBtn","click",stopAudio);
+  on("volumeRange","input",e => {
+    if($("audio")) $("audio").volume = e.target.value/100;
+    if($("volumeText")) $("volumeText").textContent = e.target.value + "%";
   });
   document.querySelectorAll(".mode").forEach(btn => btn.addEventListener("click",() => setMode(Number(btn.dataset.min),btn)));
   document.querySelectorAll(".music-card").forEach(card => card.addEventListener("click",() => {
@@ -472,17 +477,17 @@ function bind(){
     loadTrack(card.dataset.track);
     if(wasPlaying) playAudio();
   }));
-  $("saveGoalBtn").addEventListener("click",setGoal);
-  $("saveSubjectBtn").addEventListener("click",setSubject);
-  $("addTaskBtn").addEventListener("click",addTask);
-  $("settingsBtn").addEventListener("click",() => $("settingsPanel").classList.toggle("show"));
-  $("loginBtn").addEventListener("click",loginProfile);
-  $("logoutBtn").addEventListener("click",logoutProfile);
-  $("exportBtn").addEventListener("click",exportData);
-  $("importBtn").addEventListener("click",importData);
-  $("resetDataBtn").addEventListener("click",resetData);
-  $("cleanBtn").addEventListener("click",() => document.body.classList.toggle("clean"));
-  $("closeSuccessBtn").addEventListener("click",() => { $("successModal").classList.remove("show"); resetFocus(); });
+  on("saveGoalBtn","click",setGoal);
+  on("saveSubjectBtn","click",setSubject);
+  on("addTaskBtn","click",addTask);
+  on("settingsBtn","click",() => $("settingsPanel").classList.toggle("show"));
+  on("loginBtn","click",loginProfile);
+  on("logoutBtn","click",logoutProfile);
+  on("exportBtn","click",exportData);
+  on("importBtn","click",importData);
+  on("resetDataBtn","click",resetData);
+  on("cleanBtn","click",() => document.body.classList.toggle("clean"));
+  on("closeSuccessBtn","click",() => { $("successModal").classList.remove("show"); resetFocus(); });
   document.addEventListener("keydown",e => {
     if(e.code === "Space"){ e.preventDefault(); running ? pauseFocus() : startFocus(); }
   });
@@ -493,4 +498,4 @@ bind();
 loadTrack("rain");
 $("audio").volume = 0.6;
 renderAll();
-})();
+});
