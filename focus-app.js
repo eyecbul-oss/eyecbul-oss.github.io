@@ -299,19 +299,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startBreak(min){
+    if(isBreak){
+      openBreakModal();
+      return;
+    }
+
     clearInterval(timerId);
     running = false;
     pauseAudio();
 
-    if(!isBreak){
-      pausedFocusRemaining = remaining;
-      pausedFocusTotal = totalSeconds;
-    }
+    pausedFocusRemaining = remaining;
+    pausedFocusTotal = totalSeconds;
 
     isBreak = true;
     breakTotal = min * 60;
     breakRemaining = breakTotal;
     breakRunning = false;
+    clearInterval(breakTimerId);
 
     $("timerStatus").textContent = "Mola";
     forceStopAudio();
@@ -321,19 +325,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function openBreakModal(){
     const modal = $("breakModal");
-    if(modal) modal.classList.add("show");
+    if(modal){
+      modal.classList.add("show");
+      requestNativeFullscreen(modal);
+    }
     updateBreakModal();
   }
 
   function closeBreakModal(){
     const modal = $("breakModal");
     if(modal) modal.classList.remove("show");
+    if(document.fullscreenElement === modal || document.webkitFullscreenElement === modal){
+      exitNativeFullscreen();
+    }
   }
 
   function updateBreakModal(){
     if($("breakModalTimer")) $("breakModalTimer").textContent = fmt(breakRemaining);
     if($("breakStartPauseBtn")){
-      $("breakStartPauseBtn").textContent = breakRunning ? "Molayı Duraklat" : "Molayı Başlat";
+      $("breakStartPauseBtn").textContent = breakRunning ? "Duraklat" : "Başlat";
       $("breakStartPauseBtn").classList.toggle("running", breakRunning);
     }
   }
@@ -347,6 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    clearInterval(breakTimerId);
     breakRunning = true;
     updateBreakModal();
     breakTimerId = setInterval(()=>{
@@ -758,16 +769,23 @@ document.addEventListener("DOMContentLoaded", () => {
     "Seans bitene kadar buradasın."
   ];
 
+  function requestNativeFullscreen(el){
+    if(!el) return;
+    if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  }
+
+  function exitNativeFullscreen(){
+    if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+    else if(document.webkitFullscreenElement && document.webkitExitFullscreen) document.webkitExitFullscreen();
+  }
+
   function enterFullscreenFocus(){
     const overlay = $("focusOverlay");
     if(!overlay) return;
     overlay.classList.add("show","controls-visible");
     document.body.classList.add("overlay-open");
-    if(overlay.requestFullscreen){
-      overlay.requestFullscreen().catch(()=>{});
-    }else if(overlay.webkitRequestFullscreen){
-      overlay.webkitRequestFullscreen();
-    }
+    requestNativeFullscreen(overlay);
     showOverlayControls();
     showMotivationQuote();
   }
@@ -779,11 +797,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("overlay-open");
     clearTimeout(overlayVisibleTimer);
     clearInterval(quoteTimer);
-    if(document.fullscreenElement){
-      document.exitFullscreen().catch(()=>{});
-    }else if(document.webkitFullscreenElement && document.webkitExitFullscreen){
-      document.webkitExitFullscreen();
-    }
+    exitNativeFullscreen();
   }
 
   function showOverlayControls(){
@@ -1071,7 +1085,6 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   if($("toggleExamBtn")) $("toggleExamBtn").onclick=toggleExamPanel;
 
   $("addNoteBtn").onclick=addNote;
-  if($("copySummaryBtn")) $("copySummaryBtn").onclick=copyTodaySummary;
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
   $("settingsBtn").onclick=()=>$("settingsPanel").classList.toggle("show");
   $("closeSettingsBtn").onclick=()=>$("settingsPanel").classList.remove("show");
