@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
   const $ = id => document.getElementById(id);
+  const on = (id, event, fn) => {
+    const el = $(id);
+    if(el) el.addEventListener(event, fn);
+  };
 
   const tracks = {
     rain:{title:"Rain Focus",file:"focus-rain.mp3",theme:"theme-rain"},
@@ -48,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     audio.volume=$("volumeRange").value/100;
     audio.play().then(()=>{
       isAudioPlaying=true;
-      $("music-panel")?.classList?.remove("paused");
       document.querySelector(".music-panel").classList.remove("paused");
       $("trackStatus").textContent="Çalıyor";
     }).catch(()=>tryAudio(list,i+1));
@@ -212,24 +215,29 @@ document.addEventListener("DOMContentLoaded", () => {
     return "Günlük hedef tamamlandı. Şimdi tekrar veya yanlış analizi daha verimli olur.";
   }
 
+  function setText(id,value){ const el=$(id); if(el) el.textContent=value; }
+  function setValue(id,value){ const el=$(id); if(el) el.value=value; }
+
   function render(){
     const d=day(), min=Math.floor(d.seconds/60), pct=Math.min(100,Math.round(min/60*100));
-    $("timerText").textContent=fmt(remaining);
-    $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
-    $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
-    $("mainToggleBtn").classList.toggle("running", running);
-    $("savedPlan").textContent = data.plan || "Henüz plan yazılmadı.";
-    $("planInput").value = data.plan || "";
-    $("aiAdvice").textContent = advice();
-    $("todayMinutes").textContent = min+" dk";
-    $("todayPomodoros").textContent = d.pomodoros;
-    $("focusScore").textContent = score()+"%";
-    $("streakDays").textContent = streak();
-    $("progressFill").style.width = pct+"%";
-    $("progressText").textContent = min+" / 60 dk • %"+pct;
-    $("profileInfo").textContent = profile==="default" ? "Genel profil kullanılıyor." : "Aktif profil: "+(data.name || profile);
-    $("emailInput").value = profile==="default" ? "" : profile;
-    $("nameInput").value = data.name || "";
+    setText("timerText",fmt(remaining));
+    if($("timerRing")) $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
+    if($("mainToggleBtn")){
+      $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
+      $("mainToggleBtn").classList.toggle("running", running);
+    }
+    setText("savedPlan", data.plan || "Henüz plan yazılmadı.");
+    setValue("planInput", data.plan || "");
+    setText("aiAdvice", advice());
+    setText("todayMinutes", min+" dk");
+    setText("todayPomodoros", d.pomodoros);
+    setText("focusScore", score()+"%");
+    setText("streakDays", streak());
+    if($("progressFill")) $("progressFill").style.width = pct+"%";
+    setText("progressText", min+" / 60 dk • %"+pct);
+    setText("profileInfo", profile==="default" ? "Genel profil kullanılıyor." : "Aktif profil: "+(data.name || profile));
+    setValue("emailInput", profile==="default" ? "" : profile);
+    setValue("nameInput", data.name || "");
     renderNotes();
     renderSessions();
   }
@@ -278,18 +286,18 @@ document.addEventListener("DOMContentLoaded", () => {
     for(let i=0;i<28;i++){ const s=document.createElement("span"); s.className="sym"; s.textContent=syms[i%syms.length]; s.style.left=Math.random()*100+"%"; s.style.top=Math.random()*100+"%"; s.style.fontSize=(24+Math.random()*58)+"px"; s.style.animationDuration=(10+Math.random()*15)+"s"; layer.appendChild(s); }
   }
 
-  $("mainToggleBtn").onclick=toggle;
-  $("resetBtn").onclick=reset;
-  $("savePlanBtn").onclick=savePlan;
-  $("addNoteBtn").onclick=addNote;
+  on("mainToggleBtn","click",toggle);
+  on("resetBtn","click",reset);
+  on("savePlanBtn","click",savePlan);
+  on("addNoteBtn","click",addNote);
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
-  $("settingsBtn").onclick=()=>$("settingsPanel").classList.toggle("show");
-  $("loginBtn").onclick=login;
-  $("generalBtn").onclick=general;
-  $("exportBtn").onclick=exportData;
-  $("importBtn").onclick=importData;
-  $("resetDataBtn").onclick=resetData;
-  $("closeModalBtn").onclick=()=>{ $("successModal").classList.remove("show"); reset(); };
+  on("settingsBtn","click",()=>{$("settingsPanel").classList.toggle("show");});
+  on("loginBtn","click",login);
+  on("generalBtn","click",general);
+  on("exportBtn","click",exportData);
+  on("importBtn","click",importData);
+  on("resetDataBtn","click",resetData);
+  on("closeModalBtn","click",()=>{ $("successModal").classList.remove("show"); reset(); });
   document.querySelectorAll(".mode").forEach(btn=>btn.onclick=()=>{ document.querySelectorAll(".mode").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); focusSeconds=Number(btn.dataset.min)*60; totalSeconds=focusSeconds; remaining=totalSeconds; reset(); });
   document.querySelectorAll(".break-btn").forEach(btn=>btn.onclick=()=>startBreak(Number(btn.dataset.break)));
   document.querySelectorAll(".track").forEach(btn=>btn.onclick=()=>{ const was=isAudioPlaying; pauseAudio(); setTrack(btn.dataset.track); if(was) playAudio(); });
