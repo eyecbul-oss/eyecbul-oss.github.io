@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadCloud(){
     data = loadLocal();
-    if(!guestMode && user && db){
+    if(user && db && !guestMode){
       try{
         const snap = await userDoc().get();
         if(snap.exists){
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
           await saveCloud();
         }
       }catch(e){
-        console.warn("Firestore okunamadı, yerel kayıtla devam:", e);
+        console.warn("Cloud load failed:", e);
         data.email = user.email || data.email || "";
       }
     }
@@ -97,7 +97,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function saveCloud(){
-    queueSave();
+    saveLocal();
+    if(guestMode || !user || !db) return;
+    try{
+      await userDoc().set(data, {merge:true});
+    }catch(e){
+      console.warn("Cloud save failed:", e);
+    }
   }
 
   async function signIn(){
@@ -111,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showMessage("Giriş yapılıyor...");
       await Promise.race([
         auth.signInWithEmailAndPassword(email, pass),
-        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 12000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 10000))
       ]);
       localStorage.removeItem("sezr_guest_mode");
       guestMode = false;
@@ -135,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showMessage("Hesap oluşturuluyor...");
       const result = await Promise.race([
         auth.createUserWithEmailAndPassword(email, pass),
-        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 12000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 10000))
       ]);
       localStorage.removeItem("sezr_guest_mode");
       guestMode = false;
@@ -145,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
       await saveCloud();
       showMessage("Hesap oluşturuldu.","success");
     }catch(e){
-      if(e.message === "timeout") showMessage("Hesap oluşturma uzun sürdü. Email/Password açık mı kontrol et.","error");
+      if(e.message === "timeout") showMessage("Hesap oluşturma uzun sürdü. Misafir devam edebilirsin.","error");
       else showMessage(errorText(e),"error");
     }finally{
       $("authSubmit").disabled = false;
