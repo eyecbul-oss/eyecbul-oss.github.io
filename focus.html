@@ -1,203 +1,166 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SezR Focus Room</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="focus-style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SezR Focus Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="focus-style.css">
 </head>
-
 <body class="theme-rain">
+  <div id="rainLayer" class="rain-layer"></div>
+  <div id="symbolLayer" class="symbol-layer"></div>
+  <audio id="focusAudio" loop preload="metadata" playsinline></audio>
 
-<div class="ambient-layer" id="ambientLayer"></div>
-<div class="math-symbols" id="mathSymbols"></div>
+  <div class="page">
+    <header class="topbar">
+      <div class="logo">Sez<span>R</span> Focus</div>
+      <nav>
+        <a href="index.html">Ana Sayfa</a>
+        <a href="dersler.html">Derslerim</a>
+        <a href="youtube.html">YouTube</a>
+        <a href="pdf.html">PDF</a>
+        <a class="active" href="focus.html">Focus</a>
+        <a href="iletisim.html">Kayıt</a>
+      </nav>
+    </header>
 
-<audio id="audio" loop preload="metadata" playsinline></audio>
+    <main class="hero">
+      <section class="intro">
+        <div class="badge">FOCUS ROOM</div>
+        <h1>Odaklan.<br><span>Başla.</span></h1>
+        <p>Tek ekran, tek plan, tek başlatma akışı. Sayaç ve müzik birlikte çalışır.</p>
 
-<div class="app-shell">
+        <div class="plan-card">
+          <label for="planInput">Bugünkü çalışma planın</label>
+          <div class="plan-input-row">
+            <input id="planInput" placeholder="Örn. Problemlerden 20 soru çöz">
+            <button id="savePlanBtn">Kaydet</button>
+          </div>
+          <div id="savedPlan" class="saved-plan">Henüz plan yazılmadı.</div>
+        </div>
+      </section>
 
-<header class="topbar">
-  <div class="brand">Sez<span>R</span> Focus</div>
-  <nav class="nav">
-    <a href="index.html">Ana Sayfa</a>
-    <a href="dersler.html">Derslerim</a>
-    <a href="youtube.html">YouTube</a>
-    <a href="pdf.html">PDF</a>
-    <a class="active" href="focus.html">Focus</a>
-    <a href="iletisim.html">Kayıt</a>
-  </nav>
-</header>
+      <section class="focus-card">
+        <div class="timer-ring" id="timerRing">
+          <div class="timer-inner">
+            <div id="timerText">25:00</div>
+            <div id="timerStatus">Hazır</div>
+          </div>
+        </div>
 
-<main class="hero-grid">
+        <div class="primary-actions">
+          <button id="mainToggleBtn" class="main-toggle">Başlat</button>
+          <button id="resetBtn" class="soft-btn">Sıfırla</button>
+        </div>
 
-<section class="hero-copy">
-  <div class="badge">FOCUS ROOM</div>
-  <h1>Odaklan.<br><span>Başla.</span></h1>
-  <p>Pomodoro, gerçek müzik, gerçek istatistik ve sade AI tavsiyesi. Gereksiz kalabalık yok.</p>
+        <div class="mode-row">
+          <button class="mode active" data-min="25">25 dk</button>
+          <button class="mode" data-min="45">45 dk</button>
+          <button class="mode" data-min="60">60 dk</button>
+          <button class="mode" data-min="120">Deep</button>
+        </div>
 
-  <div class="hero-actions">
-    <button class="btn primary" id="startMainBtn">Başlat / Duraklat</button>
-    <button class="btn" id="cleanBtn">Clean Mode</button>
+        <div class="break-card">
+          <div>
+            <b>Mola</b>
+            <span>Seans bitince kullan.</span>
+          </div>
+          <button class="break-btn" data-break="5">5 dk</button>
+          <button class="break-btn" data-break="10">10 dk</button>
+        </div>
+
+        <label class="auto-break">
+          <input id="autoBreak" type="checkbox">
+          Seans bitince 5 dk molayı otomatik başlat
+        </label>
+
+        <div id="aiAdvice" class="ai-advice">Başlamak için 25 dakikalık tek bir seans yeterli.</div>
+      </section>
+    </main>
+
+    <section class="music-panel">
+      <div class="music-now">
+        <div>
+          <h2 id="trackTitle">Rain Focus</h2>
+          <p id="trackStatus">Sayaç başlayınca müzik de başlar.</p>
+        </div>
+        <div class="eq" id="eq"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+
+      <div class="music-controls">
+        <button id="audioToggleBtn">Sesi Aç / Kapat</button>
+        <input id="volumeRange" type="range" min="0" max="100" value="60">
+        <strong id="volumeText">60%</strong>
+      </div>
+
+      <div class="track-grid">
+        <button class="track active" data-track="rain">🌧 Rain</button>
+        <button class="track" data-track="lofi">☕ Lo-fi</button>
+        <button class="track" data-track="piano">🎹 Piano</button>
+        <button class="track" data-track="relax">🌙 Relax</button>
+        <button class="track" data-track="jazz">🎷 Jazz</button>
+        <button class="track" data-track="fire">🔥 Fire</button>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat"><b id="todayMinutes">0 dk</b><span>Bugünkü çalışma</span></div>
+      <div class="stat"><b id="todayPomodoros">0</b><span>Bugünkü pomodoro</span></div>
+      <div class="stat"><b id="focusScore">0%</b><span>Focus puanı</span></div>
+      <div class="stat"><b id="streakDays">0</b><span>Çalışma serisi</span></div>
+    </section>
+
+    <section class="bottom-grid">
+      <div class="panel">
+        <h2>Günlük İlerleme</h2>
+        <p>Hedef: 60 dakika</p>
+        <div class="progress"><div id="progressFill"></div></div>
+        <div id="progressText" class="progress-text">0 / 60 dk</div>
+      </div>
+
+      <div class="panel">
+        <h2>Notlar</h2>
+        <div class="note-row">
+          <input id="noteInput" placeholder="Kısa not ekle">
+          <button id="addNoteBtn">Ekle</button>
+        </div>
+        <div id="noteList" class="list"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Son Seanslar</h2>
+        <div id="sessionList" class="list"></div>
+      </div>
+    </section>
   </div>
 
-  <div class="active-profile" id="activeProfile">Genel Profil</div>
-</section>
-
-<section class="timer-card">
-  <div class="timer-ring" id="timerRing">
-    <div class="timer-content">
-      <div id="timerText">25:00</div>
-      <div id="timerStatus">Hazır</div>
+  <button id="settingsBtn" class="settings-btn">⚙️</button>
+  <aside id="settingsPanel" class="settings-panel">
+    <h2>Ayarlar</h2>
+    <label>Öğrenci mail</label>
+    <input id="emailInput" placeholder="ogrenci@mail.com">
+    <label>Öğrenci adı</label>
+    <input id="nameInput" placeholder="Öğrenci adı">
+    <div class="settings-actions">
+      <button id="loginBtn">Profile Geç</button>
+      <button id="generalBtn">Genel Profil</button>
     </div>
-  </div>
-
-  <div class="main-control-row">
-    <button id="startBtn" class="main-start">Başlat</button>
-    <button id="resetBtn" class="secondary-control">Sıfırla</button>
-    <button id="rainBtn" class="secondary-control">Yağmur</button>
-  </div>
-
-  <div class="mode-controls">
-    <button class="mode active" data-min="25">25 dk</button>
-    <button class="mode" data-min="45">45 dk</button>
-    <button class="mode" data-min="60">60 dk</button>
-    <button class="mode" data-min="120">Deep</button>
-  </div>
-
-  <div class="break-box">
-    <div class="break-title">Seans bitince mola verebilirsin</div>
-    <div class="break-controls">
-      <button class="break-btn" data-break="5">☕ 5 dk mola</button>
-      <button class="break-btn" data-break="10">🌙 10 dk mola</button>
-    </div>
-    <label class="auto-next">
-      <input id="autoNext" type="checkbox">
-      Seans bitince 5 dk molayı otomatik başlat
-    </label>
-  </div>
-
-  <div class="goal-row">
-    <input id="planInput" placeholder="Bugünkü çalışma planın: Örn. Problemlerden 20 soru">
-    <button id="savePlanBtn">Kaydet</button>
-  </div>
-
-  <div class="ai-box" id="aiAdvice">Bugün için 25 dakikalık bir başlangıç yeterli.</div>
-</section>
-
-</main>
-
-<section class="player-card paused" id="playerCard">
-  <div>
-    <h2 id="trackTitle">Rain Focus</h2>
-    <p id="trackStatus">Hazır</p>
-  </div>
-
-  <div class="equalizer">
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
-
-  <div class="player-controls compact-player">
-    <button id="playBtn">▶️ Ses</button>
-    <input id="volumeRange" type="range" min="0" max="100" value="60">
-    <b id="volumeText">60%</b>
-  </div>
-</section>
-
-<h2 class="section-title">Müzik Seç</h2>
-<section class="music-grid">
-  <button class="music-card active" data-track="rain"><b>🌧 Rain Focus</b><span>Yağmur atmosferi</span></button>
-  <button class="music-card" data-track="lofi"><b>☕ Lo-fi</b><span>Sakin çalışma ritmi</span></button>
-  <button class="music-card" data-track="piano"><b>🎹 Piano</b><span>Derin odak</span></button>
-  <button class="music-card" data-track="relax"><b>🌙 Relax</b><span>Yumuşak çalışma</span></button>
-  <button class="music-card" data-track="jazz"><b>🎷 Jazz</b><span>Gece çalışma</span></button>
-  <button class="music-card" data-track="fire"><b>🔥 Fire</b><span>Sıcak atmosfer</span></button>
-</section>
-
-<h2 class="section-title">Gerçek İstatistikler</h2>
-<section class="stats-grid">
-  <div class="stat"><b id="todayMinutes">0 dk</b><span>Bugünkü çalışma</span></div>
-  <div class="stat"><b id="todayPomodoros">0</b><span>Bugünkü pomodoro</span></div>
-  <div class="stat"><b id="streakDays">0</b><span>Çalışma serisi</span></div>
-  <div class="stat"><b id="focusScore">0%</b><span>Focus puanı</span></div>
-</section>
-
-<section class="status-card">
-  <h2>Nasıl Kullanılır?</h2>
-  <div class="usage-tip">Başlat’a basınca sayaç ve müzik birlikte başlar. Duraklatınca ikisi de durur. Seans bitince istersen mola başlat.</div>
-  <div id="smartStatus">Başlamak için hazır.</div>
-</section>
-<h2 class="section-title">Haftalık Özet</h2>
-<section class="week-grid" id="weekGrid"></section>
-
-<h2 class="section-title">Çalışma Planı ve Seanslar</h2>
-<section class="task-grid">
-  <div class="panel">
-    <h2>Plan Notları</h2>
-    <p id="planDisplay">Plan yazılmadı.</p>
-    <div class="task-input">
-      <input id="quickNoteInput" placeholder="Kısa not ekle">
-      <button id="addNoteBtn">Ekle</button>
-    </div>
-    <div id="taskList" class="task-list"></div>
-  </div>
-
-  <div class="panel">
-    <h2>Son Seanslar</h2>
-    <div id="sessionList" class="session-list"></div>
-  </div>
-</section>
-
-</div>
-
-<button class="settings-btn" id="settingsBtn">⚙️</button>
-
-<aside class="settings-panel" id="settingsPanel">
-  <h2>Giriş ve Ayarlar</h2>
-
-  <label>Öğrenci Mail</label>
-  <input id="emailInput" type="email" placeholder="ogrenci@mail.com">
-
-  <label>Öğrenci Adı</label>
-  <input id="nameInput" placeholder="Öğrenci adı">
-
-  <div class="settings-actions">
-    <button id="loginBtn" class="gold-action">Profile Geç</button>
-    <button id="logoutBtn">Genel Profil</button>
-  </div>
-
-  <div class="settings-info" id="settingsInfo">Genel profil kullanılıyor.</div>
-
-  <h3>Kayıtlı Profiller</h3>
-  <div id="profileList" class="profile-list"></div>
-
-  <h3>Yedek</h3>
-  <div class="settings-actions">
+    <div id="profileInfo" class="info-box">Genel profil kullanılıyor.</div>
     <button id="exportBtn">Yedek Kodu Al</button>
     <button id="importBtn">Yedekten Yükle</button>
+    <button id="resetDataBtn" class="danger">Bu Profilin Verilerini Sıfırla</button>
+  </aside>
+
+  <div id="successModal" class="modal">
+    <div class="modal-box">
+      <h2>Seans Tamamlandı 🔥</h2>
+      <p>Kısa bir mola ver. Sonra devam edebilirsin.</p>
+      <button id="closeModalBtn">Tamam</button>
+    </div>
   </div>
 
-  <button id="resetDataBtn" class="danger">Bu Profilin Verilerini Sıfırla</button>
-</aside>
-
-<div class="success-modal" id="successModal">
-  <div class="success-box">
-    <h2>Seans Tamamlandı 🔥</h2>
-    <p>Kısa bir mola ver. Sonra kaldığın yerden devam edebilirsin.</p>
-    <button id="closeSuccessBtn" class="btn primary">Devam Et</button>
-  </div>
-</div>
-
-<nav class="quick">
-  <a href="index.html"><span>🏠</span>Ana</a>
-  <a href="dersler.html"><span>📖</span>Ders</a>
-  <a href="youtube.html"><span>▶️</span>Video</a>
-  <a class="active" href="focus.html"><span>🎧</span>Focus</a>
-  <a href="iletisim.html"><span>🟢</span>Kayıt</a>
-</nav>
-
-<script src="focus-app.js"></script>
+  <script src="focus-app.js"></script>
 </body>
 </html>
