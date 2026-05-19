@@ -34,6 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
   let quoteTimer = null;
   let pausedFocusRemaining = null;
   let pausedFocusTotal = null;
+  let breakTimerId = null;
+  let breakRemaining = 5 * 60;
+  let breakTotal = 5 * 60;
+  let breakRunning = false;
   let saveTimer = null;
   let saveBusy = false;
 
@@ -282,6 +286,9 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(timerId);
     running=false;
     isBreak=false;
+    clearInterval(breakTimerId);
+    breakRunning = false;
+    closeBreakModal();
     pausedFocusRemaining = null;
     pausedFocusTotal = null;
     totalSeconds=focusSeconds;
@@ -293,20 +300,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function startBreak(min){
     clearInterval(timerId);
-    running=false;
+    running = false;
+    pauseAudio();
 
     if(!isBreak){
       pausedFocusRemaining = remaining;
       pausedFocusTotal = totalSeconds;
     }
 
-    isBreak=true;
-    totalSeconds=min*60;
-    remaining=totalSeconds;
-    $("timerStatus").textContent="Mola";
+    isBreak = true;
+    breakTotal = min * 60;
+    breakRemaining = breakTotal;
+    breakRunning = false;
+
+    $("timerStatus").textContent = "Mola";
     forceStopAudio();
+    openBreakModal();
     render();
-    start();
+  }
+
+  function openBreakModal(){
+    const modal = $("breakModal");
+    if(modal) modal.classList.add("show");
+    updateBreakModal();
+  }
+
+  function closeBreakModal(){
+    const modal = $("breakModal");
+    if(modal) modal.classList.remove("show");
+  }
+
+  function updateBreakModal(){
+    if($("breakModalTimer")) $("breakModalTimer").textContent = fmt(breakRemaining);
+    if($("breakStartPauseBtn")){
+      $("breakStartPauseBtn").textContent = breakRunning ? "Molayı Duraklat" : "Molayı Başlat";
+      $("breakStartPauseBtn").classList.toggle("running", breakRunning);
+    }
+  }
+
+  function toggleBreakTimer(){
+    if(!isBreak) return;
+    if(breakRunning){
+      clearInterval(breakTimerId);
+      breakRunning = false;
+      updateBreakModal();
+      return;
+    }
+
+    breakRunning = true;
+    updateBreakModal();
+    breakTimerId = setInterval(()=>{
+      if(breakRemaining > 0){
+        breakRemaining--;
+        updateBreakModal();
+      }else{
+        finishBreakAndResume(false);
+      }
+    },1000);
+  }
+
+  function finishBreakAndResume(manual=true){
+    clearInterval(breakTimerId);
+    breakRunning = false;
+    isBreak = false;
+
+    totalSeconds = pausedFocusTotal || focusSeconds;
+    remaining = pausedFocusRemaining !== null ? pausedFocusRemaining : totalSeconds;
+    pausedFocusRemaining = null;
+    pausedFocusTotal = null;
+
+    closeBreakModal();
+    forceStopAudio();
+    if(!manual) playAlarm();
+    $("timerStatus").textContent = manual ? "Moladan döndün" : "Mola bitti";
+    render();
   }
 
   async function finish(){
@@ -314,16 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
     running=false;
 
     if(isBreak){
-      isBreak=false;
-      totalSeconds=pausedFocusTotal || focusSeconds;
-      remaining=pausedFocusRemaining !== null ? pausedFocusRemaining : totalSeconds;
-      pausedFocusRemaining = null;
-      pausedFocusTotal = null;
-      $("timerStatus").textContent="Mola bitti";
-      showMotivationQuote();
-      forceStopAudio();
-      playAlarm();
-      render();
+      finishBreakAndResume(false);
       return;
     }
 
@@ -765,7 +823,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if($("overlayTimer")) $("overlayTimer").textContent = fmt(remaining);
     if($("overlayStatus")) $("overlayStatus").textContent = isBreak ? "Mola" : (running ? "Çalışıyor" : "Hazır");
     if($("overlaySubStatus")){
-      if(isBreak) $("overlaySubStatus").textContent = "Mola bitince kaldığın süreden devam edersin.";
+      if(isBreak) $("overlaySubStatus").textContent = "Mola penceresinden bitirince kaldığın süreden devam edersin.";
       else if(running) $("overlaySubStatus").textContent = "Odak modundasın. Sadece bu seans.";
       else if(remaining < totalSeconds) $("overlaySubStatus").textContent = "Kaldığın yerden devam edebilirsin.";
       else $("overlaySubStatus").textContent = "Başlamak için hazır.";
@@ -999,6 +1057,8 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   if($("overlayToggleBtn")) $("overlayToggleBtn").onclick=toggle;
   if($("overlayResetBtn")) $("overlayResetBtn").onclick=reset;
   if($("overlayExitBtn")) $("overlayExitBtn").onclick=exitFullscreenFocus;
+  if($("breakStartPauseBtn")) $("breakStartPauseBtn").onclick=toggleBreakTimer;
+  if($("breakFinishBtn")) $("breakFinishBtn").onclick=()=>finishBreakAndResume(true);
   $("addTaskBtn").onclick=addDailyTask;
   
   if($("clearTasksBtn")) $("clearTasksBtn").onclick=clearDailyTasks;
@@ -1027,6 +1087,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   document.querySelectorAll(".track").forEach(btn=>btn.onclick=()=>{ const was=isAudioPlaying; pauseAudio(); setTrack(btn.dataset.track); if(was) playAudio(); });
   document.addEventListener("keydown",e=>{ 
     const tag=(e.target.tagName||"").toLowerCase(); 
+    if(e.key === "Escape" && $("breakModal") && $("breakModal").classList.contains("show")){ finishBreakAndResume(true); return; }
     if(e.key === "Escape" && $("focusOverlay") && $("focusOverlay").classList.contains("show")){ exitFullscreenFocus(); return; }
     if(e.key === "Enter" && e.target && e.target.id === "taskInput"){ e.preventDefault(); addDailyTask(); return; }
     if(tag==="input"||tag==="textarea")return; 
