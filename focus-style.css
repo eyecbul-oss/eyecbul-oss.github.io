@@ -137,3 +137,53 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
   .week-bars{gap:7px}
   .weekly-head{display:grid}
 }
+
+
+.target-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin:10px 0 14px;
+  color:#dbeafe;
+  font-weight:900;
+}
+.target-row select{
+  min-height:42px;
+  padding:0 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(15,23,42,.86);
+  color:white;
+  font-weight:900;
+}
+.focus-level{
+  margin-top:12px;
+  padding:12px;
+  border-radius:16px;
+  background:rgba(56,189,248,.09);
+  border:1px solid rgba(56,189,248,.18);
+  color:#dbeafe;
+  font-weight:900;
+  line-height:1.45;
+}
+.plan-progress{
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  background:rgba(255,255,255,.08);
+  margin-top:12px;
+  border:1px solid rgba(255,255,255,.10);
+}
+.plan-progress div{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#22c55e,#facc15);
+  border-radius:999px;
+}
+.plan-progress-text{
+  margin-top:8px;
+  color:#cbd5e1;
+  font-weight:900;
+  font-size:13px;
+}

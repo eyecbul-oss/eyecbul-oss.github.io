@@ -64,6 +64,10 @@
           </div>
           <div id="savedPlan" class="saved-plan">Henüz plan yazılmadı.</div>
           <button id="completePlanBtn" class="complete-plan">Bugünkü plan tamamlandı</button>
+          <div class="plan-progress">
+            <div id="planProgressFill"></div>
+          </div>
+          <div id="planProgressText" class="plan-progress-text">Plan ilerlemesi: %0</div>
         </div>
       </section>
 
@@ -147,9 +151,19 @@
     <section class="bottom-grid">
       <div class="panel">
         <h2>Günlük İlerleme</h2>
-        <p>Hedef: 60 dakika</p>
+        <div class="target-row">
+          <span>Günlük hedef</span>
+          <select id="dailyTargetSelect">
+            <option value="30">30 dk</option>
+            <option value="45">45 dk</option>
+            <option value="60" selected>60 dk</option>
+            <option value="90">90 dk</option>
+            <option value="120">120 dk</option>
+          </select>
+        </div>
         <div class="progress"><div id="progressFill"></div></div>
         <div id="progressText" class="progress-text">0 / 60 dk</div>
+        <div id="focusLevel" class="focus-level">Başlangıç seviyesi</div>
       </div>
 
       <div class="panel">

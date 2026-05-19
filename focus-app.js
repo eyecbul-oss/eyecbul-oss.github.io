@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let saveTimer = null;
   let saveBusy = false;
 
-  function blank(){ return {name:"",email:"",plan:"",notes:[],sessions:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
+  function blank(){ return {name:"",email:"",plan:"",dailyTarget:60,notes:[],sessions:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
   function localKey(){ return user ? "sezr_focus_cloud_" + user.uid : "sezr_focus_guest"; }
   function saveLocal(){ localStorage.setItem(localKey(), JSON.stringify(data)); }
   function loadLocal(){ try{return Object.assign(blank(), JSON.parse(localStorage.getItem(localKey()) || "{}"));}catch{return blank();} }
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if(day().planDone) return "Bugünkü plan tamamlandı. İstersen kısa tekrar veya yanlış analiziyle günü kapat.";
     if(!data.plan && min===0) return "Önce çalışma planını yaz, sonra 25 dakikalık seansla başla.";
     if(data.plan && min===0) return "Plan hazır. Şimdi 25 dakika sadece bu plana odaklan.";
-    if(min<60) return "Başlangıç yapıldı. 60 dakikaya yaklaşmak için bir seans daha ekleyebilirsin.";
+    if(min < Number(data.dailyTarget || 60)) return "Başlangıç yapıldı. Günlük hedefe yaklaşmak için bir seans daha ekleyebilirsin.";
     return "Günlük hedef tamamlandı. Şimdi tekrar veya yanlış analizi daha verimli olur.";
   }
 
@@ -359,6 +359,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if(totalEl) totalEl.textContent = total + " dk";
   }
 
+
+  async function changeDailyTarget(){
+    data.dailyTarget = Number($("dailyTargetSelect").value || 60);
+    await saveCloud();
+    render();
+  }
+
   async function togglePlanDone(){
     const d = day();
     d.planDone = !d.planDone;
@@ -367,7 +374,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function render(){
-    const d=day(), min=Math.floor(d.seconds/60), pct=Math.min(100,Math.round(min/60*100));
+    const d=day();
+    const min=Math.floor(d.seconds/60);
+    const target = Number(data.dailyTarget || 60);
+    const pct=Math.min(100,Math.round(min/target*100));
     $("timerText").textContent=fmt(remaining);
     $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
     $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
@@ -391,7 +401,20 @@ document.addEventListener("DOMContentLoaded", () => {
     $("focusScore").textContent = score()+"%";
     $("streakDays").textContent = streak();
     $("progressFill").style.width = pct+"%";
-    $("progressText").textContent = min+" / 60 dk • %"+pct;
+    $("progressText").textContent = min+" / "+target+" dk • %"+pct;
+    if($("dailyTargetSelect")) $("dailyTargetSelect").value = String(target);
+    if($("focusLevel")){
+      let level = "Başlangıç seviyesi";
+      if(min >= target) level = "Günlük hedef tamamlandı";
+      else if(min >= target*0.66) level = "Güçlü odak seviyesi";
+      else if(min >= target*0.33) level = "İyi ilerleme";
+      $("focusLevel").textContent = level;
+    }
+    if($("planProgressFill")){
+      const planPct = d.planDone ? 100 : Math.min(90, pct);
+      $("planProgressFill").style.width = planPct + "%";
+      $("planProgressText").textContent = "Plan ilerlemesi: %" + planPct;
+    }
     $("accountEmail").textContent = user ? user.email : "";
 renderNotes();
     renderSessions();
@@ -447,6 +470,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("resetBtn").onclick=reset;
   $("savePlanBtn").onclick=savePlan;
   $("completePlanBtn").onclick=togglePlanDone;
+  if($("dailyTargetSelect")) $("dailyTargetSelect").onchange=changeDailyTarget;
   $("addNoteBtn").onclick=addNote;
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
   $("settingsBtn").onclick=()=>$("settingsPanel").classList.toggle("show");
