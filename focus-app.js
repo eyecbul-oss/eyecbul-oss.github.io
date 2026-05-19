@@ -30,6 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let totalSeconds = focusSeconds;
   let remaining = totalSeconds;
   let mode = "login";
+  let overlayVisibleTimer = null;
+  let quoteTimer = null;
   let saveTimer = null;
   let saveBusy = false;
 
@@ -306,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
       totalSeconds=focusSeconds;
       remaining=totalSeconds;
       $("timerStatus").textContent="Mola bitti";
+      showMotivationQuote();
       forceStopAudio();
       playAlarm();
       render();
@@ -329,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       const result = document.querySelector(".modal-box .mini-result");
       if(result) result.textContent = buildTodaySummary();
+      showMotivationQuote();
       $("successModal").classList.add("show"); 
       $("timerStatus").textContent="Tamamlandı"; 
       render(); 
@@ -387,6 +391,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
+
+  let latestExamSuggestion = "20 soru çöz ve yanlışlarını işaretle.";
 
   const examOptions = {
     YKS: [
@@ -499,6 +505,8 @@ document.addEventListener("DOMContentLoaded", () => {
         s3 = "Moral koruma";
       }
 
+      latestExamSuggestion = s1 + " + " + s2 + " + " + s3;
+
       mini.innerHTML =
         '<div class="exam-mini-step"><b>1</b><span>'+s1+'</span></div>' +
         '<div class="exam-mini-step"><b>2</b><span>'+s2+'</span></div>' +
@@ -593,11 +601,23 @@ document.addEventListener("DOMContentLoaded", () => {
       total += min;
       const h = Math.max(20, Math.round((min/maxMin)*130));
       const item = document.createElement("div");
-      item.className = "week-day";
+      item.className = "week-day" + (x.key === today() ? " active-today" : "");
       item.innerHTML = '<div class="week-bar" style="height:'+h+'px"></div><b>'+min+' dk</b><span>'+x.label+'</span>';
       box.appendChild(item);
     });
     if(totalEl) totalEl.textContent = total + " dk";
+    const insight = $("weeklyInsight");
+    if(insight){
+      const activeDays = days.filter(x => ((data.days[x.key]||{}).seconds||0) > 0).length;
+      let msg = "Bu hafta henüz düzenli veri oluşmadı.";
+      if(total > 0){
+        msg = "Bu hafta " + activeDays + " gün çalıştın. Toplam süre: " + total + " dk.";
+        if(activeDays >= 5) msg += " Güzel bir ritim yakalanmış.";
+        else if(activeDays >= 3) msg += " Ritmi korumak için 1-2 gün daha eklenebilir.";
+        else msg += " Düzen için kısa seanslarla gün sayısını artır.";
+      }
+      insight.textContent = msg;
+    }
   }
 
 
@@ -657,21 +677,85 @@ document.addEventListener("DOMContentLoaded", () => {
     textEl.textContent = msg;
   }
 
+
+  const motivationQuotes = [
+    "Sadece bu seans.",
+    "Telefon yok, bahane yok.",
+    "Küçük adım, büyük fark.",
+    "Şimdi odak zamanı.",
+    "Bir soru daha.",
+    "Dikkatini koru.",
+    "Seans bitene kadar buradasın."
+  ];
+
+  function enterFullscreenFocus(){
+    const overlay = $("focusOverlay");
+    if(!overlay) return;
+    overlay.classList.add("show","controls-visible");
+    document.body.classList.add("overlay-open");
+    showOverlayControls();
+    showMotivationQuote();
+  }
+
+  function exitFullscreenFocus(){
+    const overlay = $("focusOverlay");
+    if(!overlay) return;
+    overlay.classList.remove("show","controls-visible");
+    document.body.classList.remove("overlay-open");
+    clearTimeout(overlayVisibleTimer);
+    clearInterval(quoteTimer);
+  }
+
+  function showOverlayControls(){
+    const overlay = $("focusOverlay");
+    if(!overlay) return;
+    overlay.classList.add("controls-visible");
+    clearTimeout(overlayVisibleTimer);
+    overlayVisibleTimer = setTimeout(()=>{
+      if(overlay.classList.contains("show")) overlay.classList.remove("controls-visible");
+    }, 2600);
+  }
+
+  function showMotivationQuote(){
+    const q = $("overlayQuote");
+    if(!q) return;
+    const pick = motivationQuotes[Math.floor(Math.random()*motivationQuotes.length)];
+    q.textContent = pick;
+    q.classList.add("show");
+    setTimeout(()=>q.classList.remove("show"), 4200);
+  }
+
+  function startQuoteLoop(){
+    clearInterval(quoteTimer);
+    quoteTimer = setInterval(()=>{
+      if($("focusOverlay") && $("focusOverlay").classList.contains("show")){
+        showMotivationQuote();
+      }
+    }, 18000);
+  }
+
   function render(){
     const d=day();
     const min=Math.floor(d.seconds/60);
     const target = Number(data.dailyTarget || 60);
     const pct=Math.min(100,Math.round(min/target*100));
     $("timerText").textContent=fmt(remaining);
+    if($("overlayTimer")) $("overlayTimer").textContent = fmt(remaining);
+    if($("overlayStatus")) $("overlayStatus").textContent = isBreak ? "Mola" : (running ? "Çalışıyor" : "Hazır");
     $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
     $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
     $("mainToggleBtn").classList.toggle("running", running);
+    if($("overlayToggleBtn")){
+      $("overlayToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
+      $("overlayToggleBtn").classList.toggle("running", running);
+    }
     renderDailyTasks();
     $("aiAdvice").textContent = advice();
     $("todayMinutes").textContent = min+" dk";
     $("todayPomodoros").textContent = d.pomodoros;
     $("focusScore").textContent = score()+"%";
     $("streakDays").textContent = streak();
+    if($("taskCompletion")) $("taskCompletion").textContent = taskStats().pct + "%";
     $("progressFill").style.width = pct+"%";
     $("progressText").textContent = min+" / "+target+" dk • %"+pct;
     if($("dailyTargetSelect")) $("dailyTargetSelect").value = String(target);
@@ -713,7 +797,7 @@ renderNotes();
     const done = ts.total > 0 && ts.done === ts.total ? "tamamlandı" : "devam ediyor";
     const subject = "";
     const exam = data.exam && data.exam.type ? " • Sınav: " + data.exam.type : "";
-    return "Plan: " + plan + subject + exam + " • Durum: " + done + " • Süre: " + min + " dk • Pomodoro: " + (d.pomodoros || 0);
+    return "Görevler: " + plan + subject + exam + " • Durum: " + done + " • Tamamlama: %" + ts.pct + " • Süre: " + min + " dk • Pomodoro: " + (d.pomodoros || 0);
   }
 
   function renderTodaySummary(){
@@ -761,9 +845,10 @@ renderNotes();
       tasks.forEach((task,index)=>{
         const item = document.createElement("div");
         item.className = "daily-task " + (task.done ? "done" : "");
-        item.innerHTML = '<span class="check">'+(task.done ? "✓" : "")+'</span><span></span>';
-        item.querySelector("span:last-child").textContent = task.text;
-        item.onclick = () => toggleDailyTask(index);
+        item.innerHTML = '<div class="daily-task-main"><span class="check">'+(task.done ? "✓" : "")+'</span><span></span></div><button class="daily-task-delete">Sil</button>';
+        item.querySelector(".daily-task-main span:last-child").textContent = task.text;
+        item.querySelector(".daily-task-main").onclick = () => toggleDailyTask(index);
+        item.querySelector(".daily-task-delete").onclick = (e) => { e.stopPropagation(); deleteDailyTask(index); };
         box.appendChild(item);
       });
     }
@@ -824,6 +909,29 @@ renderNotes();
     render();
   }
 
+  async function deleteDailyTask(index){
+    const tasks = getTasks();
+    if(!tasks[index]) return;
+    tasks.splice(index,1);
+    await saveCloud();
+    render();
+  }
+
+  async function clearDoneTasks(){
+    const tasks = getTasks();
+    const doneCount = tasks.filter(t=>t.done).length;
+    if(doneCount === 0) return;
+    data.tasks = tasks.filter(t=>!t.done);
+    await saveCloud();
+    render();
+  }
+
+  async function addExamTask(){
+    getTasks().push({text:latestExamSuggestion || "20 soru çöz ve yanlışlarını işaretle.",done:false,createdAt:new Date().toISOString()});
+    await saveCloud();
+    render();
+  }
+
   async function clearDailyTasks(){
     if(getTasks().length === 0) return;
     if(!confirm("Bugünkü tüm görevler temizlensin mi?")) return;
@@ -859,9 +967,15 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("guestBtn").onclick=continueGuest;
   $("mainToggleBtn").onclick=toggle;
   $("resetBtn").onclick=reset;
+  if($("fullscreenBtn")) $("fullscreenBtn").onclick=enterFullscreenFocus;
+  if($("overlayToggleBtn")) $("overlayToggleBtn").onclick=toggle;
+  if($("overlayResetBtn")) $("overlayResetBtn").onclick=reset;
+  if($("overlayExitBtn")) $("overlayExitBtn").onclick=exitFullscreenFocus;
   $("addTaskBtn").onclick=addDailyTask;
   
   if($("clearTasksBtn")) $("clearTasksBtn").onclick=clearDailyTasks;
+  if($("clearDoneTasksBtn")) $("clearDoneTasksBtn").onclick=clearDoneTasks;
+  if($("addExamTaskBtn")) $("addExamTaskBtn").onclick=addExamTask;
   if($("dailyTargetSelect")) $("dailyTargetSelect").onchange=changeDailyTarget;
   if($("examGroupSelect")) $("examGroupSelect").onchange=changeExamGroup;
   if($("examTypeSelect")) $("examTypeSelect").onchange=changeExamType;
@@ -885,10 +999,16 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   document.querySelectorAll(".track").forEach(btn=>btn.onclick=()=>{ const was=isAudioPlaying; pauseAudio(); setTrack(btn.dataset.track); if(was) playAudio(); });
   document.addEventListener("keydown",e=>{ 
     const tag=(e.target.tagName||"").toLowerCase(); 
+    if(e.key === "Escape" && $("focusOverlay") && $("focusOverlay").classList.contains("show")){ exitFullscreenFocus(); return; }
     if(e.key === "Enter" && e.target && e.target.id === "taskInput"){ e.preventDefault(); addDailyTask(); return; }
     if(tag==="input"||tag==="textarea")return; 
     if(e.code==="Space"){e.preventDefault();toggle();} 
   });
+
+  ["mousemove","touchstart","click"].forEach(evt=>{
+    if($("focusOverlay")) $("focusOverlay").addEventListener(evt, showOverlayControls);
+  });
+  startQuoteLoop();
 
   document.addEventListener("click", (e) => {
     const panel = $("settingsPanel");

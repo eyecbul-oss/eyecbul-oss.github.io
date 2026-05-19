@@ -70,7 +70,10 @@
             <button id="addTaskBtn">Ekle</button>
           </div>
           <div id="taskListMain" class="daily-task-list"></div>
-          <button id="clearTasksBtn" class="clear-plan">Tüm Görevleri Temizle</button>
+          <div class="task-actions">
+            <button id="clearDoneTasksBtn" class="soft-task-btn">Tamamlananları Temizle</button>
+            <button id="clearTasksBtn" class="clear-plan">Tümünü Temizle</button>
+          </div>
           <div class="plan-progress">
             <div id="planProgressFill"></div>
           </div>
@@ -89,6 +92,7 @@
         <div class="primary-actions">
           <button id="mainToggleBtn" class="main-toggle">Başlat</button>
           <button id="resetBtn" class="soft-btn">Sıfırla</button>
+          <button id="fullscreenBtn" class="soft-btn">Tam Ekran</button>
         </div>
 
         <div class="mode-row">
@@ -146,6 +150,7 @@
       <div class="stat"><b id="todayPomodoros">0</b><span>Bugünkü pomodoro</span></div>
       <div class="stat"><b id="focusScore">0%</b><span>Focus puanı</span></div>
       <div class="stat"><b id="streakDays">0</b><span>Çalışma serisi</span></div>
+      <div class="stat"><b id="taskCompletion">0%</b><span>Görev tamamlama</span></div>
     </section>
 
     <section id="examCountdownPanel" class="exam-panel">
@@ -188,6 +193,7 @@
         <div id="examAdvice" class="exam-advice">Sınav seç ve kaydet.</div>
         <div id="examMiniPlan" class="exam-mini-plan"></div>
         <div id="studyIntensity" class="study-intensity"></div>
+        <button id="addExamTaskBtn" class="exam-task-btn">Bugüne önerilen görev ekle</button>
       </div>
     </section>
 
@@ -197,6 +203,7 @@
         <span id="weeklyTotal">0 dk</span>
       </div>
       <div id="weekBars" class="week-bars"></div>
+      <div id="weeklyInsight" class="weekly-insight">Haftalık analiz hazırlanıyor.</div>
     </section>
 
     <section class="today-summary">
@@ -257,6 +264,20 @@
       <div id="taskHistoryList" class="list"></div>
     </section>
   </div>
+
+  <section id="focusOverlay" class="focus-overlay">
+    <div id="overlayControls" class="overlay-controls">
+      <button id="overlayToggleBtn">Başlat</button>
+      <button id="overlayResetBtn">Sıfırla</button>
+      <button id="overlayExitBtn">Çık</button>
+    </div>
+
+    <div class="overlay-timer-wrap">
+      <div id="overlayTimer">25:00</div>
+      <div id="overlayStatus">Hazır</div>
+      <div id="overlayQuote" class="overlay-quote">Sadece bu seans.</div>
+    </div>
+  </section>
 
   <button id="settingsBtn" class="settings-btn hidden" aria-label="Ayarlar"><span>⚙</span></button>
   <aside id="settingsPanel" class="settings-panel">
