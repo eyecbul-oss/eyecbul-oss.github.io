@@ -316,10 +316,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function advice(){
     const d=day(), min=Math.floor(d.seconds/60);
+    if(day().planDone) return "Bugünkü plan tamamlandı. İstersen kısa tekrar veya yanlış analiziyle günü kapat.";
     if(!data.plan && min===0) return "Önce çalışma planını yaz, sonra 25 dakikalık seansla başla.";
     if(data.plan && min===0) return "Plan hazır. Şimdi 25 dakika sadece bu plana odaklan.";
     if(min<60) return "Başlangıç yapıldı. 60 dakikaya yaklaşmak için bir seans daha ekleyebilirsin.";
     return "Günlük hedef tamamlandı. Şimdi tekrar veya yanlış analizi daha verimli olur.";
+  }
+
+
+  function last7Days(){
+    const arr = [];
+    const now = new Date();
+    for(let i=6;i>=0;i--){
+      const d = new Date(now);
+      d.setDate(now.getDate()-i);
+      arr.push({
+        key:d.toISOString().slice(0,10),
+        label:d.toLocaleDateString("tr-TR",{weekday:"short"})
+      });
+    }
+    return arr;
+  }
+
+  function renderWeekly(){
+    const box = $("weekBars");
+    const totalEl = $("weeklyTotal");
+    if(!box) return;
+    const days = last7Days();
+    let total = 0;
+    const maxMin = Math.max(60, ...days.map(x => Math.floor(((data.days[x.key]||{}).seconds||0)/60)));
+    box.innerHTML = "";
+    days.forEach(x=>{
+      const d = data.days[x.key] || {seconds:0,pomodoros:0};
+      const min = Math.floor((d.seconds||0)/60);
+      total += min;
+      const h = Math.max(20, Math.round((min/maxMin)*130));
+      const item = document.createElement("div");
+      item.className = "week-day";
+      item.innerHTML = '<div class="week-bar" style="height:'+h+'px"></div><b>'+min+' dk</b><span>'+x.label+'</span>';
+      box.appendChild(item);
+    });
+    if(totalEl) totalEl.textContent = total + " dk";
+  }
+
+  async function togglePlanDone(){
+    const d = day();
+    d.planDone = !d.planDone;
+    await saveCloud();
+    render();
   }
 
   function render(){
@@ -329,6 +373,10 @@ document.addEventListener("DOMContentLoaded", () => {
     $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
     $("mainToggleBtn").classList.toggle("running", running);
     $("savedPlan").textContent = data.plan || "Henüz plan yazılmadı.";
+    if($("completePlanBtn")){
+      $("completePlanBtn").classList.toggle("done", !!day().planDone);
+      $("completePlanBtn").textContent = day().planDone ? "Plan tamamlandı ✓" : "Bugünkü plan tamamlandı";
+    }
     const active = document.activeElement;
     const typing =
       active &&
@@ -373,7 +421,12 @@ renderNotes();
     });
   }
 
-  async function savePlan(){ data.plan=$("planInput").value.trim(); await saveCloud(); render(); }
+  async function savePlan(){ 
+    data.plan=$("planInput").value.trim(); 
+    day().planDone = false;
+    await saveCloud(); 
+    render(); 
+  }
   async function addNote(){ const v=$("noteInput").value.trim(); if(!v)return; data.notes.push(v); $("noteInput").value=""; await saveCloud(); render(); }
 function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navigator.clipboard.writeText(raw).then(()=>alert("Yedek kodu kopyalandı.")):prompt("Yedek kodu:",raw); }
   async function importData(){ const raw=prompt("Yedek kodunu yapıştır:"); if(!raw)return; try{data=Object.assign(blank(),JSON.parse(raw)); await saveCloud(); render(); alert("Yedek yüklendi.");}catch{alert("Yedek okunamadı.");} }
@@ -393,6 +446,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("mainToggleBtn").onclick=toggle;
   $("resetBtn").onclick=reset;
   $("savePlanBtn").onclick=savePlan;
+  $("completePlanBtn").onclick=togglePlanDone;
   $("addNoteBtn").onclick=addNote;
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
   $("settingsBtn").onclick=()=>$("settingsPanel").classList.toggle("show");
