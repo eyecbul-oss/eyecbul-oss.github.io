@@ -74,6 +74,11 @@
     <button id="saveGoalBtn">Kaydet</button>
   </div>
 
+  <div class="goal-row">
+    <input id="subjectInput" placeholder="Bugünkü konu: Problemler, Türev...">
+    <button id="saveSubjectBtn">Konu Kaydet</button>
+  </div>
+
   <div class="ai-box" id="aiAdvice">Bugün için 25 dakikalık bir başlangıç yeterli.</div>
 </section>
 
@@ -120,6 +125,14 @@
   <p>Varsayılan hedef: 60 dakika.</p>
   <div class="progress-line"><div id="dailyProgress"></div></div>
   <div id="progressText">0 / 60 dk</div>
+</section>
+
+<h2 class="section-title">Haftalık Özet</h2>
+<section class="week-grid" id="weekGrid"></section>
+
+<section class="progress-card">
+  <h2>Bugünkü Plan</h2>
+  <div id="todayPlan" class="plan-box">Konu yazınca plan hazırlanır.</div>
 </section>
 
 <h2 class="section-title">Görevler</h2>

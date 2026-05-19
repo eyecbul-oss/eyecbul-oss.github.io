@@ -210,11 +210,21 @@ function setGoal(){
   renderAll();
 }
 
+function setSubject(){
+  const day = ensureToday();
+  day.subject = $("subjectInput").value.trim();
+  saveData();
+  renderAll();
+}
+
 function aiAdvice(){
   const day = ensureToday();
   const min = Math.floor(day.seconds/60);
+  const subject = day.subject || "";
+  if(subject && min === 0) return subject + " için 25 dakika sadece bu konuya odaklan. Sonra 10 soru çöz.";
   if(data.goal && min === 0) return "Hedefin hazır: " + data.goal + ". Şimdi 25 dakikalık tek bir seansla başla.";
   if(min === 0) return "Bugün için 25 dakikalık bir başlangıç yeterli.";
+  if(subject && min < 60) return subject + " çalışması başladı. Bir seans daha ekleyip kısa soru pratiği yap.";
   if(min < 25) return "Başlangıç yapılmış. Ritmi kaybetmeden bir seans daha ekle.";
   if(min < 60) return "İyi gidiyorsun. Günlük 60 dakikaya yaklaşmak için bir pomodoro daha ekle.";
   if(day.pomodoros >= 2) return "Bugün güçlü çalıştın. Artık yeni konu yerine kısa tekrar ve yanlış analizi yap.";
@@ -355,10 +365,55 @@ function resetData(){
   renderAll();
 }
 
+
+function lastSevenDays(){
+  const arr = [];
+  const now = new Date();
+  for(let i=6;i>=0;i--){
+    const d = new Date(now);
+    d.setDate(now.getDate()-i);
+    arr.push({
+      key:d.toISOString().slice(0,10),
+      label:d.toLocaleDateString("tr-TR",{weekday:"short",day:"2-digit"})
+    });
+  }
+  return arr;
+}
+
+function renderWeekly(){
+  const box = $("weekGrid");
+  if(!box) return;
+  box.innerHTML = "";
+  lastSevenDays().forEach(day => {
+    const d = data.days[day.key] || {seconds:0,pomodoros:0};
+    const div = document.createElement("div");
+    div.className = "week-day";
+    div.innerHTML = `<strong>${day.label}</strong><b>${Math.floor((d.seconds||0)/60)} dk</b><span>${d.pomodoros||0} pomodoro</span>`;
+    box.appendChild(div);
+  });
+}
+
+function renderPlan(){
+  const box = $("todayPlan");
+  const subjectInput = $("subjectInput");
+  if(!box || !subjectInput) return;
+  const day = ensureToday();
+  const subject = day.subject || "";
+  subjectInput.value = subject;
+  const min = Math.floor(day.seconds/60);
+  let a = subject ? `${subject} konusuna 25 dk odaklan.` : "Bugünkü konuyu yaz.";
+  let b = "5 dk mola ver.";
+  let c = "10 soru çöz veya yanlış analizi yap.";
+  if(min >= 60){ a="Ana çalışma tamamlandı."; b="Kısa tekrar yap."; c="Yanlış analiziyle günü kapat."; }
+  box.innerHTML = `<div class="plan-step"><b>1</b><span>${a}</span></div><div class="plan-step"><b>2</b><span>${b}</span></div><div class="plan-step"><b>3</b><span>${c}</span></div>`;
+}
+
 function renderAll(){
   updateTimerUI();
   $("aiAdvice").textContent = aiAdvice();
   renderStats();
+  renderWeekly();
+  renderPlan();
   renderTasks();
   renderSessions();
   renderProfile();
@@ -418,6 +473,7 @@ function bind(){
     if(wasPlaying) playAudio();
   }));
   $("saveGoalBtn").addEventListener("click",setGoal);
+  $("saveSubjectBtn").addEventListener("click",setSubject);
   $("addTaskBtn").addEventListener("click",addTask);
   $("settingsBtn").addEventListener("click",() => $("settingsPanel").classList.toggle("show"));
   $("loginBtn").addEventListener("click",loginProfile);
