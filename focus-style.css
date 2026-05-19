@@ -243,3 +243,45 @@ body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-
     width:100%;
   }
 }
+
+
+.plan-actions{
+  display:grid;
+  grid-template-columns:1.4fr .9fr;
+  gap:10px;
+  margin-top:12px;
+}
+.clear-plan{
+  min-height:48px;
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:16px;
+  background:rgba(15,23,42,.78);
+  color:#dbeafe;
+  font-weight:900;
+  cursor:pointer;
+}
+.clear-plan:hover{
+  background:rgba(239,68,68,.12);
+  color:#fecaca;
+  border-color:rgba(239,68,68,.24);
+}
+.target-advice{
+  margin-top:10px;
+  padding:12px;
+  border-radius:16px;
+  background:rgba(250,204,21,.08);
+  border:1px solid rgba(250,204,21,.16);
+  color:#fde68a;
+  font-weight:900;
+  line-height:1.45;
+}
+.plan-history-panel .list-item span{
+  line-height:1.45;
+}
+.plan-date-badge{
+  color:#facc15;
+  font-weight:900;
+}
+@media(max-width:620px){
+  .plan-actions{grid-template-columns:1fr}
+}

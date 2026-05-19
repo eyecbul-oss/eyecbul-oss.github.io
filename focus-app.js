@@ -423,6 +423,12 @@ document.addEventListener("DOMContentLoaded", () => {
       else if(min >= target*0.33) level = "İyi ilerleme";
       $("focusLevel").textContent = level;
     }
+    if($("targetAdvice")){
+      let msg = "Hedefe başlamak için ilk seansı başlat.";
+      if(min > 0 && min < target) msg = "Hedefe kalan süre: " + Math.max(0,target-min) + " dk.";
+      if(min >= target) msg = "Bugünkü süre hedefi tamamlandı. Artık tekrar veya yanlış analizi yapabilirsin.";
+      $("targetAdvice").textContent = msg;
+    }
     if($("planProgressFill")){
       const planPct = d.planDone ? 100 : Math.min(90, pct);
       $("planProgressFill").style.width = planPct + "%";
@@ -468,8 +474,9 @@ renderNotes();
     list.slice(0,6).forEach(item=>{
       const div = document.createElement("div");
       div.className = "list-item";
-      div.innerHTML = "<span></span>";
-      div.querySelector("span").textContent = item.date + " " + item.time + " • " + item.text;
+      div.innerHTML = "<span><span class='plan-date-badge'></span><br><span class='plan-history-text'></span></span>";
+      div.querySelector(".plan-date-badge").textContent = item.date + " • " + item.time;
+      div.querySelector(".plan-history-text").textContent = item.text;
       box.appendChild(div);
     });
   }
@@ -496,6 +503,16 @@ renderNotes();
       div.textContent=s;
       box.appendChild(div);
     });
+  }
+
+  async function clearPlan(){
+    if(!data.plan && !$("planInput").value.trim()) return;
+    if(!confirm("Bugünkü plan temizlensin mi?")) return;
+    data.plan = "";
+    day().planDone = false;
+    $("planInput").value = "";
+    await saveCloud();
+    render();
   }
 
   async function savePlan(){ 
@@ -534,6 +551,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("resetBtn").onclick=reset;
   $("savePlanBtn").onclick=savePlan;
   $("completePlanBtn").onclick=togglePlanDone;
+  if($("clearPlanBtn")) $("clearPlanBtn").onclick=clearPlan;
   if($("dailyTargetSelect")) $("dailyTargetSelect").onchange=changeDailyTarget;
   $("addNoteBtn").onclick=addNote;
   if($("copySummaryBtn")) $("copySummaryBtn").onclick=copyTodaySummary;
