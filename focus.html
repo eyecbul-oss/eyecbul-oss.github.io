@@ -57,26 +57,17 @@
         <p>Tek ekran, tek plan, tek başlatma akışı. Sayaç ve müzik birlikte çalışır.</p>
 
         <div class="plan-card">
-          <label for="planInput">Bugünkü çalışma planın</label>
+          <label for="taskInput">Bugünkü görevlerin</label>
           <div class="plan-input-row">
-            <input id="planInput" placeholder="Örn. Problemlerden 20 soru çöz">
-            <button id="savePlanBtn">Kaydet</button>
+            <input id="taskInput" placeholder="Örn. Matematik: Türev 30 soru">
+            <button id="addTaskBtn">Ekle</button>
           </div>
-          <div id="savedPlan" class="saved-plan">Henüz plan yazılmadı.</div>
-          <div class="subject-tags">
-            <button class="subject-tag" data-subject="Problemler">Problemler</button>
-            <button class="subject-tag" data-subject="Türev">Türev</button>
-            <button class="subject-tag" data-subject="Limit">Limit</button>
-            <button class="subject-tag" data-subject="Trigonometri">Trigonometri</button>
-          </div>
-          <div class="plan-actions">
-            <button id="completePlanBtn" class="complete-plan">Bugünkü plan tamamlandı</button>
-            <button id="clearPlanBtn" class="clear-plan">Planı Temizle</button>
-          </div>
+          <div id="taskListMain" class="daily-task-list"></div>
+          <button id="clearTasksBtn" class="clear-plan">Tüm Görevleri Temizle</button>
           <div class="plan-progress">
             <div id="planProgressFill"></div>
           </div>
-          <div id="planProgressText" class="plan-progress-text">Plan ilerlemesi: %0</div>
+          <div id="planProgressText" class="plan-progress-text">Görev ilerlemesi: %0</div>
         </div>
       </section>
 
@@ -175,10 +166,16 @@
           <button id="saveExamBtn">Kaydet</button>
         </div>
 
-        <div class="exam-counter">
-          <div><b id="examDays">0</b><span>Gün</span></div>
-          <div><b id="examHours">0</b><span>Saat</span></div>
-          <div><b id="examMinutes">0</b><span>Dakika</span></div>
+        <div class="exam-countdown-app">
+          <div class="big-days">
+            <b id="examDays">0</b>
+            <span>gün kaldı</span>
+          </div>
+          <div class="small-time">
+            <div><b id="examHours">0</b><span>saat</span></div>
+            <div><b id="examMinutes">0</b><span>dakika</span></div>
+            <div><b id="examSeconds">0</b><span>saniye</span></div>
+          </div>
         </div>
 
         <div id="examAdvice" class="exam-advice">Sınav seç ve kaydet.</div>
@@ -201,6 +198,17 @@
         <p id="todaySummaryText">Henüz çalışma başlamadı.</p>
       </div>
       <button id="copySummaryBtn">Özeti Kopyala</button>
+    </section>
+
+    <section class="rhythm-card">
+      <div>
+        <h2>Çalışma Ritmi</h2>
+        <p id="rhythmText">Ritim analizi için birkaç seans gerekli.</p>
+      </div>
+      <div class="rhythm-stats">
+        <div><b id="weeklyAverage">0 dk</b><span>Haftalık ortalama</span></div>
+        <div><b id="bestDay">0 dk</b><span>En iyi gün</span></div>
+      </div>
     </section>
 
     <section class="bottom-grid">
@@ -238,8 +246,8 @@
     </section>
 
     <section class="panel plan-history-panel">
-      <h2>Plan Geçmişi</h2>
-      <div id="planHistoryList" class="list"></div>
+      <h2>Görev Geçmişi</h2>
+      <div id="taskHistoryList" class="list"></div>
     </section>
   </div>
 

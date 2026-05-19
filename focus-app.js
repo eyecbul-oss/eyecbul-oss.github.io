@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let saveTimer = null;
   let saveBusy = false;
 
-  function blank(){ return {name:"",email:"",plan:"",selectedSubject:"",dailyTarget:60,exam:{group:"YKS",type:"TYT",date:"2026-06-20",hidden:false},notes:[],sessions:[],planHistory:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
+  function blank(){ return {name:"",email:"",tasks:[],dailyTarget:60,exam:{group:"YKS",type:"TYT",date:"2026-06-20",hidden:false},notes:[],sessions:[],taskHistory:[],totalSeconds:0,totalPomodoros:0,days:{}}; }
   function localKey(){ return user ? "sezr_focus_cloud_" + user.uid : "sezr_focus_guest"; }
   function saveLocal(){ localStorage.setItem(localKey(), JSON.stringify(data)); }
   function loadLocal(){ try{return Object.assign(blank(), JSON.parse(localStorage.getItem(localKey()) || "{}"));}catch{return blank();} }
@@ -327,12 +327,38 @@ document.addEventListener("DOMContentLoaded", () => {
     return count;
   }
 
+
+  function getTasks(){
+    data.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+    return data.tasks;
+  }
+
+  function taskStats(){
+    const tasks = getTasks();
+    const total = tasks.length;
+    const done = tasks.filter(t=>t.done).length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    return {total,done,pct};
+  }
+
+  function mainTaskText(){
+    const tasks = getTasks();
+    if(tasks.length === 0) return "Görev eklenmedi";
+    return tasks.map(t => (t.done ? "✓ " : "• ") + t.text).join(" / ");
+  }
+
   function advice(){
     const d=day(), min=Math.floor(d.seconds/60);
-    if(day().planDone) return "Bugünkü plan tamamlandı. İstersen kısa tekrar veya yanlış analiziyle günü kapat.";
-    if(!data.plan && min===0) return "Önce çalışma planını yaz, sonra 25 dakikalık seansla başla.";
-    if(data.plan && min===0) return "Plan hazır. Şimdi 25 dakika sadece bu plana odaklan.";
-    if(min < Number(data.dailyTarget || 60)) return "Başlangıç yapıldı. Günlük hedefe yaklaşmak için bir seans daha ekleyebilirsin.";
+    const ts = taskStats();
+    const rhythmStats = typeof getLast7Stats === "function" ? getLast7Stats() : [];
+    const avgMin = rhythmStats.length ? Math.round(rhythmStats.reduce((s,x)=>s+x.minutes,0)/7) : 0;
+    if(ts.total === 0 && min===0) return "Bugün için birkaç küçük görev ekle, sonra 25 dakikalık seansla başla.";
+    if(ts.total > 0 && ts.done === ts.total) return "Bugünkü görevler tamamlandı. İstersen kısa tekrar veya yanlış analiziyle günü kapat.";
+    if(ts.total > 0 && min===0) return "Görevlerin hazır. Şimdi 25 dakika sadece ilk göreve odaklan.";
+    if(min<60){
+      if(avgMin && min < avgMin) return "Başlangıç yapıldı. Haftalık ortalamanı yakalamak için bir seans daha ekle.";
+      return "Başlangıç yapıldı. Günlük hedefe ve sınav tempona yaklaşmak için bir seans daha ekleyebilirsin.";
+    }
     return "Günlük hedef tamamlandı. Şimdi tekrar veya yanlış analizi daha verimli olur.";
   }
 
@@ -405,20 +431,23 @@ document.addEventListener("DOMContentLoaded", () => {
       $("examDays").textContent = "0";
       $("examHours").textContent = "0";
       $("examMinutes").textContent = "0";
+      if($("examSeconds")) $("examSeconds").textContent = "0";
       $("examAdvice").textContent = "Seçilen tarih geçmiş görünüyor. Yeni tarih seçebilirsin.";
       if($("examMiniPlan")) $("examMiniPlan").innerHTML = "";
       if($("studyIntensity")) $("studyIntensity").textContent = "";
       return;
     }
 
-    const totalMinutes = Math.floor(diff / 60000);
-    const days = Math.floor(totalMinutes / (60*24));
-    const hours = Math.floor((totalMinutes % (60*24)) / 60);
-    const minutes = totalMinutes % 60;
+    const totalSecondsLeft = Math.floor(diff / 1000);
+    const days = Math.floor(totalSecondsLeft / (60*60*24));
+    const hours = Math.floor((totalSecondsLeft % (60*60*24)) / (60*60));
+    const minutes = Math.floor((totalSecondsLeft % (60*60)) / 60);
+    const seconds = totalSecondsLeft % 60;
 
     $("examDays").textContent = days;
     $("examHours").textContent = hours;
     $("examMinutes").textContent = minutes;
+    if($("examSeconds")) $("examSeconds").textContent = seconds;
 
     let advice = "Bugün küçük ama net bir çalışma planı seç.";
     if(days > 120) advice = "Zaman var. Konu eksiklerini kapatmaya odaklan.";
@@ -561,6 +590,49 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   }
 
+
+  function getLast7Stats(){
+    const arr = [];
+    const now = new Date();
+    for(let i=6;i>=0;i--){
+      const d = new Date(now);
+      d.setDate(now.getDate()-i);
+      const key = d.toISOString().slice(0,10);
+      const dayData = data.days[key] || {seconds:0,pomodoros:0};
+      arr.push({
+        key,
+        minutes: Math.floor((dayData.seconds || 0) / 60),
+        pomodoros: dayData.pomodoros || 0
+      });
+    }
+    return arr;
+  }
+
+  function renderRhythm(){
+    const avgEl = $("weeklyAverage");
+    const bestEl = $("bestDay");
+    const textEl = $("rhythmText");
+    if(!avgEl || !bestEl || !textEl) return;
+
+    const stats = getLast7Stats();
+    const total = stats.reduce((s,x)=>s+x.minutes,0);
+    const avg = Math.round(total / 7);
+    const best = Math.max(0, ...stats.map(x=>x.minutes));
+    const todayMin = Math.floor((day().seconds || 0) / 60);
+
+    avgEl.textContent = avg + " dk";
+    bestEl.textContent = best + " dk";
+
+    let msg = "Ritim analizi için birkaç seans gerekli.";
+    if(total > 0){
+      if(todayMin === 0) msg = "Bugün henüz başlamadın. Kısa bir seans ritmi korur.";
+      else if(todayMin >= avg && avg > 0) msg = "Bugün haftalık ortalamanı yakaladın. Güzel tempo.";
+      else if(todayMin < avg && avg > 0) msg = "Bugün ortalamanın altındasın. Bir kısa seans daha iyi olur.";
+      if(best > 0 && todayMin >= best) msg = "Bugün haftanın en iyi çalışma günlerinden biri olabilir.";
+    }
+    textEl.textContent = msg;
+  }
+
   function render(){
     const d=day();
     const min=Math.floor(d.seconds/60);
@@ -570,19 +642,7 @@ document.addEventListener("DOMContentLoaded", () => {
     $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
     $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
     $("mainToggleBtn").classList.toggle("running", running);
-    $("savedPlan").textContent = data.plan || "Henüz plan yazılmadı.";
-    if($("completePlanBtn")){
-      $("completePlanBtn").classList.toggle("done", !!day().planDone);
-      $("completePlanBtn").textContent = day().planDone ? "Plan tamamlandı ✓" : "Bugünkü plan tamamlandı";
-    }
-    const active = document.activeElement;
-    const typing =
-      active &&
-      (active.tagName === "INPUT" || active.tagName === "TEXTAREA");
-
-    if(!typing && $("planInput")){
-      $("planInput").value = data.plan || "";
-    }
+    renderDailyTasks();
     $("aiAdvice").textContent = advice();
     $("todayMinutes").textContent = min+" dk";
     $("todayPomodoros").textContent = d.pomodoros;
@@ -618,9 +678,10 @@ renderNotes();
   function buildTodaySummary(){
     const d = day();
     const min = Math.floor((d.seconds || 0) / 60);
-    const plan = data.plan ? data.plan : "Plan yazılmadı";
-    const done = d.planDone ? "tamamlandı" : "devam ediyor";
-    const subject = data.selectedSubject ? " • Konu: " + data.selectedSubject : "";
+    const plan = mainTaskText();
+    const ts = taskStats();
+    const done = ts.total > 0 && ts.done === ts.total ? "tamamlandı" : "devam ediyor";
+    const subject = "";
     const exam = data.exam && data.exam.type ? " • Sınav: " + data.exam.type : "";
     return "Plan: " + plan + subject + exam + " • Durum: " + done + " • Süre: " + min + " dk • Pomodoro: " + (d.pomodoros || 0);
   }
@@ -639,13 +700,13 @@ renderNotes();
     }
   }
 
-  function renderPlanHistory(){
-    const box = $("planHistoryList");
+  function renderTaskHistory(){
+    const box = $("taskHistoryList");
     if(!box) return;
-    const list = data.planHistory || [];
+    const list = data.taskHistory || [];
     box.innerHTML = "";
     if(list.length === 0){
-      box.innerHTML = '<div class="list-item">Henüz plan geçmişi yok.</div>';
+      box.innerHTML = '<div class="list-item">Henüz görev geçmişi yok.</div>';
       return;
     }
     list.slice(0,6).forEach(item=>{
@@ -656,6 +717,29 @@ renderNotes();
       div.querySelector(".plan-history-text").textContent = item.text;
       box.appendChild(div);
     });
+  }
+
+
+  function renderDailyTasks(){
+    const box = $("taskListMain");
+    if(!box) return;
+    const tasks = getTasks();
+    box.innerHTML = "";
+    if(tasks.length === 0){
+      box.innerHTML = '<div class="daily-task"><span class="check">+</span><span>Henüz görev eklenmedi.</span></div>';
+    }else{
+      tasks.forEach((task,index)=>{
+        const item = document.createElement("div");
+        item.className = "daily-task " + (task.done ? "done" : "");
+        item.innerHTML = '<span class="check">'+(task.done ? "✓" : "")+'</span><span></span>';
+        item.querySelector("span:last-child").textContent = task.text;
+        item.onclick = () => toggleDailyTask(index);
+        box.appendChild(item);
+      });
+    }
+    const ts = taskStats();
+    if($("planProgressFill")) $("planProgressFill").style.width = ts.pct + "%";
+    if($("planProgressText")) $("planProgressText").textContent = "Görev ilerlemesi: %" + ts.pct + " (" + ts.done + "/" + ts.total + ")";
   }
 
   function renderNotes(){
@@ -685,56 +769,39 @@ renderNotes();
     });
   }
 
-  async function clearPlan(){
-    if(!data.plan && !$("planInput").value.trim()) return;
-    if(!confirm("Bugünkü plan temizlensin mi?")) return;
-    data.plan = "";
-    day().planDone = false;
-    $("planInput").value = "";
+  async function addDailyTask(){
+    const input = $("taskInput");
+    const text = input.value.trim();
+    if(!text) return;
+    getTasks().push({text,done:false,createdAt:new Date().toISOString()});
+    data.taskHistory = data.taskHistory || [];
+    data.taskHistory.unshift({
+      text,
+      date:new Date().toLocaleDateString("tr-TR"),
+      time:new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})
+    });
+    data.taskHistory = data.taskHistory.slice(0,12);
+    input.value = "";
     await saveCloud();
     render();
   }
 
-  async function applySubject(subject){
-    data.selectedSubject = subject;
-    const current = $("planInput").value.trim();
-    if(!current){
-      $("planInput").value = subject + " çalışması";
-    }else if(!current.toLowerCase().includes(subject.toLowerCase())){
-      $("planInput").value = subject + " • " + current;
-    }
-    await savePlan();
+  async function toggleDailyTask(index){
+    const tasks = getTasks();
+    if(!tasks[index]) return;
+    tasks[index].done = !tasks[index].done;
+    await saveCloud();
+    render();
   }
 
-  function renderNextSuggestion(){
-    const el = $("nextSuggestion");
-    if(!el) return;
-    const d = day();
-    const min = Math.floor((d.seconds || 0) / 60);
-    let text = "Sonraki adım: İlk seansı başlat.";
-    if(data.plan && min === 0) text = "Sonraki adım: Bu plana 25 dakika odaklan.";
-    if(min > 0 && min < Number(data.dailyTarget || 60)) text = "Sonraki adım: Bir seans daha ekle veya 10 soru çöz.";
-    if(d.planDone) text = "Sonraki adım: Yanlış analizi veya kısa tekrar yap.";
-    if(min >= Number(data.dailyTarget || 60)) text = "Sonraki adım: Yeni konuya geçmeden önce günü özetle.";
-    el.textContent = text;
+  async function clearDailyTasks(){
+    if(getTasks().length === 0) return;
+    if(!confirm("Bugünkü tüm görevler temizlensin mi?")) return;
+    data.tasks = [];
+    await saveCloud();
+    render();
   }
 
-  async function savePlan(){ 
-    const newPlan = $("planInput").value.trim();
-    if(newPlan && newPlan !== data.plan){
-      data.planHistory = data.planHistory || [];
-      data.planHistory.unshift({
-        text:newPlan,
-        date:new Date().toLocaleDateString("tr-TR"),
-        time:new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})
-      });
-      data.planHistory = data.planHistory.slice(0,8);
-    }
-    data.plan = newPlan; 
-    day().planDone = false;
-    await saveCloud(); 
-    render(); 
-  }
   async function addNote(){ 
     const v=$("noteInput").value.trim(); 
     if(!v)return; 
@@ -760,17 +827,15 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("forgotBtn").onclick=forgot;
   $("mainToggleBtn").onclick=toggle;
   $("resetBtn").onclick=reset;
-  $("savePlanBtn").onclick=savePlan;
-  $("completePlanBtn").onclick=togglePlanDone;
-  if($("clearPlanBtn")) $("clearPlanBtn").onclick=clearPlan;
+  $("addTaskBtn").onclick=addDailyTask;
+  
+  if($("clearTasksBtn")) $("clearTasksBtn").onclick=clearDailyTasks;
   if($("dailyTargetSelect")) $("dailyTargetSelect").onchange=changeDailyTarget;
   if($("examGroupSelect")) $("examGroupSelect").onchange=changeExamGroup;
   if($("examTypeSelect")) $("examTypeSelect").onchange=changeExamType;
   if($("saveExamBtn")) $("saveExamBtn").onclick=saveExamSettings;
   if($("toggleExamBtn")) $("toggleExamBtn").onclick=toggleExamPanel;
-  document.querySelectorAll(".subject-tag").forEach(btn=>{
-    btn.onclick=()=>applySubject(btn.dataset.subject);
-  });
+
   $("addNoteBtn").onclick=addNote;
   if($("copySummaryBtn")) $("copySummaryBtn").onclick=copyTodaySummary;
   $("volumeRange").oninput=e=>{ $("focusAudio").volume=e.target.value/100; $("volumeText").textContent="🔊 "+e.target.value+"%"; };
@@ -781,7 +846,12 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   document.querySelectorAll(".mode").forEach(btn=>btn.onclick=()=>{ document.querySelectorAll(".mode").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); focusSeconds=Number(btn.dataset.min)*60; totalSeconds=focusSeconds; remaining=totalSeconds; reset(); });
   document.querySelectorAll(".break-btn").forEach(btn=>btn.onclick=()=>startBreak(Number(btn.dataset.break)));
   document.querySelectorAll(".track").forEach(btn=>btn.onclick=()=>{ const was=isAudioPlaying; pauseAudio(); setTrack(btn.dataset.track); if(was) playAudio(); });
-  document.addEventListener("keydown",e=>{ const tag=(e.target.tagName||"").toLowerCase(); if(tag==="input"||tag==="textarea")return; if(e.code==="Space"){e.preventDefault();toggle();} });
+  document.addEventListener("keydown",e=>{ 
+    const tag=(e.target.tagName||"").toLowerCase(); 
+    if(e.key === "Enter" && e.target && e.target.id === "taskInput"){ e.preventDefault(); addDailyTask(); return; }
+    if(tag==="input"||tag==="textarea")return; 
+    if(e.code==="Space"){e.preventDefault();toggle();} 
+  });
 
   document.addEventListener("click", (e) => {
     const panel = $("settingsPanel");
@@ -824,7 +894,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
 
   setInterval(()=>{ 
     if($("examCountdownPanel")) renderExamCountdown(); 
-  }, 60000);
+  }, 1000);
 
   ambience();
   setTrack("rain");
