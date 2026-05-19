@@ -702,8 +702,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  async function changeDailyTarget(){
-    data.dailyTarget = Number($("dailyTargetSelect").value || 60);
+  async function changeDailyTarget(value){
+    data.dailyTarget = Number(value || 60);
     await saveCloud();
     render();
   }
@@ -739,6 +739,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const textEl = $("rhythmText");
     if(!avgEl || !bestEl || !textEl) return;
 
+    const card = document.querySelector(".rhythm-card");
+    let statusLine = document.getElementById("rhythmStatusLine");
+    if(card && !statusLine){
+      statusLine = document.createElement("div");
+      statusLine.id = "rhythmStatusLine";
+      statusLine.className = "rhythm-status-line";
+      card.appendChild(statusLine);
+    }
+
     const stats = getLast7Stats();
     const total = stats.reduce((s,x)=>s+x.minutes,0);
     const avg = Math.round(total / 7);
@@ -747,6 +756,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     avgEl.textContent = avg + " dk";
     bestEl.textContent = best + " dk";
+    if(card) card.classList.toggle("not-ready", total === 0);
 
     let msg = "Ritim analizi için birkaç seans gerekli.";
     if(total > 0){
@@ -756,6 +766,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if(best > 0 && todayMin >= best) msg = "Bugün haftanın en iyi çalışma günlerinden biri olabilir.";
     }
     textEl.textContent = msg;
+    if(statusLine){
+      statusLine.textContent = total > 0
+        ? "Çalışma ritmi aktif: haftalık verilerine göre yorum yapıyor."
+        : "Çalışma ritmi için önce birkaç seans tamamla.";
+    }
   }
 
 
@@ -858,7 +873,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if($("taskCompletion")) $("taskCompletion").textContent = taskStats().pct + "%";
     $("progressFill").style.width = pct+"%";
     $("progressText").textContent = min+" / "+target+" dk • %"+pct;
-    if($("dailyTargetSelect")) $("dailyTargetSelect").value = String(target);
+    document.querySelectorAll("#dailyTargetOptions button").forEach(btn=>{
+      btn.classList.toggle("active", Number(btn.dataset.target) === target);
+    });
     if($("focusLevel")){
       let level = "Başlangıç seviyesi";
       if(min >= target) level = "Günlük hedef tamamlandı";
@@ -959,6 +976,7 @@ renderNotes();
 
   function renderNotes(){
     const box=$("noteList"); box.innerHTML="";
+    data.notes = (data.notes || []).filter(n => (typeof n === "string" ? n.trim() : (n.text || "").trim()));
     if(data.notes.length===0){ box.innerHTML='<div class="list-item">Henüz not yok.</div>'; return; }
     data.notes.forEach((n,i)=>{
       const noteText = typeof n === "string" ? n : n.text;
@@ -1042,7 +1060,8 @@ renderNotes();
 
   async function addNote(){ 
     const v=$("noteInput").value.trim(); 
-    if(!v)return; 
+    if(!v) return; 
+    data.notes = (data.notes || []).filter(n => (typeof n === "string" ? n.trim() : (n.text || "").trim()));
     data.notes.push({text:v,date:new Date().toLocaleDateString("tr-TR"),time:new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"})}); 
     $("noteInput").value=""; 
     await saveCloud(); 
@@ -1078,7 +1097,9 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   if($("clearTasksBtn")) $("clearTasksBtn").onclick=clearDailyTasks;
   if($("clearDoneTasksBtn")) $("clearDoneTasksBtn").onclick=clearDoneTasks;
   if($("addExamTaskBtn")) $("addExamTaskBtn").onclick=addExamTask;
-  if($("dailyTargetSelect")) $("dailyTargetSelect").onchange=changeDailyTarget;
+  document.querySelectorAll("#dailyTargetOptions button").forEach(btn=>{
+    btn.onclick=()=>changeDailyTarget(btn.dataset.target);
+  });
   if($("examGroupSelect")) $("examGroupSelect").onchange=changeExamGroup;
   if($("examTypeSelect")) $("examTypeSelect").onchange=changeExamType;
   if($("saveExamBtn")) $("saveExamBtn").onclick=saveExamSettings;

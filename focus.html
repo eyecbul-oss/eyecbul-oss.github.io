@@ -219,15 +219,15 @@
     <section class="bottom-grid">
       <div class="panel">
         <h2>Günlük İlerleme</h2>
-        <div class="target-row">
+        <div class="target-row modern-target-row">
           <span>Günlük hedef</span>
-          <select id="dailyTargetSelect">
-            <option value="30">30 dk</option>
-            <option value="45">45 dk</option>
-            <option value="60" selected>60 dk</option>
-            <option value="90">90 dk</option>
-            <option value="120">120 dk</option>
-          </select>
+          <div class="target-options" id="dailyTargetOptions">
+            <button data-target="30">30 dk</button>
+            <button data-target="45">45 dk</button>
+            <button data-target="60" class="active">60 dk</button>
+            <button data-target="90">90 dk</button>
+            <button data-target="120">120 dk</button>
+          </div>
         </div>
         <div class="progress"><div id="progressFill"></div></div>
         <div id="progressText" class="progress-text">0 / 60 dk</div>

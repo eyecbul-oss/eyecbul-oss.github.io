@@ -1309,3 +1309,101 @@ button{
     grid-template-columns:1fr;
   }
 }
+
+
+/* FINAL V2: modern target selector */
+.modern-target-row{
+  align-items:flex-start!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+}
+.target-options{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  padding:8px;
+  border-radius:22px;
+  background:rgba(15,23,42,.58);
+  border:1px solid rgba(255,255,255,.10);
+}
+.target-options button{
+  min-height:46px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.055);
+  color:#dbeafe;
+  font-weight:900;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+}
+.target-options button:hover{
+  transform:translateY(-2px);
+  border-color:rgba(250,204,21,.35);
+  box-shadow:0 0 22px rgba(250,204,21,.12);
+}
+.target-options button.active{
+  background:linear-gradient(180deg,#facc15,#eab308);
+  color:#111827;
+  border-color:#facc15;
+  box-shadow:0 0 28px rgba(250,204,21,.18);
+}
+
+/* Notes must not look like checked tasks */
+#noteList .list-item{
+  text-decoration:none!important;
+  background:rgba(15,23,42,.72)!important;
+  border-color:rgba(255,255,255,.10)!important;
+}
+#noteList .list-item:before{
+  content:"📝";
+  margin-right:2px;
+}
+#noteList .list-item span{
+  text-decoration:none!important;
+}
+#noteList .list-item button{
+  margin-left:auto;
+}
+
+/* Rhythm status clarity */
+.rhythm-card{
+  position:relative;
+}
+.rhythm-card:before{
+  content:"Aktif";
+  position:absolute;
+  right:18px;
+  top:18px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.24);
+  color:#dcfce7;
+  font-size:12px;
+  font-weight:900;
+}
+.rhythm-card.not-ready:before{
+  content:"Veri bekliyor";
+  background:rgba(250,204,21,.10);
+  border-color:rgba(250,204,21,.22);
+  color:#fde68a;
+}
+.rhythm-status-line{
+  margin-top:10px;
+  padding:12px;
+  border-radius:16px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.09);
+  color:#dbeafe;
+  font-weight:900;
+  line-height:1.45;
+}
+@media(max-width:720px){
+  .target-options{
+    grid-template-columns:repeat(2,1fr);
+  }
+  .target-options button:last-child{
+    grid-column:1/-1;
+  }
+}
