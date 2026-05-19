@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let mode = "login";
   let overlayVisibleTimer = null;
   let quoteTimer = null;
+  let pausedFocusRemaining = null;
+  let pausedFocusTotal = null;
   let saveTimer = null;
   let saveBusy = false;
 
@@ -280,6 +282,8 @@ document.addEventListener("DOMContentLoaded", () => {
     clearInterval(timerId);
     running=false;
     isBreak=false;
+    pausedFocusRemaining = null;
+    pausedFocusTotal = null;
     totalSeconds=focusSeconds;
     remaining=totalSeconds;
     pauseAudio();
@@ -290,6 +294,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function startBreak(min){
     clearInterval(timerId);
     running=false;
+
+    if(!isBreak){
+      pausedFocusRemaining = remaining;
+      pausedFocusTotal = totalSeconds;
+    }
+
     isBreak=true;
     totalSeconds=min*60;
     remaining=totalSeconds;
@@ -305,8 +315,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(isBreak){
       isBreak=false;
-      totalSeconds=focusSeconds;
-      remaining=totalSeconds;
+      totalSeconds=pausedFocusTotal || focusSeconds;
+      remaining=pausedFocusRemaining !== null ? pausedFocusRemaining : totalSeconds;
+      pausedFocusRemaining = null;
+      pausedFocusTotal = null;
       $("timerStatus").textContent="Mola bitti";
       showMotivationQuote();
       forceStopAudio();
@@ -693,6 +705,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if(!overlay) return;
     overlay.classList.add("show","controls-visible");
     document.body.classList.add("overlay-open");
+    if(overlay.requestFullscreen){
+      overlay.requestFullscreen().catch(()=>{});
+    }else if(overlay.webkitRequestFullscreen){
+      overlay.webkitRequestFullscreen();
+    }
     showOverlayControls();
     showMotivationQuote();
   }
@@ -704,6 +721,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.remove("overlay-open");
     clearTimeout(overlayVisibleTimer);
     clearInterval(quoteTimer);
+    if(document.fullscreenElement){
+      document.exitFullscreen().catch(()=>{});
+    }else if(document.webkitFullscreenElement && document.webkitExitFullscreen){
+      document.webkitExitFullscreen();
+    }
   }
 
   function showOverlayControls(){
@@ -742,6 +764,12 @@ document.addEventListener("DOMContentLoaded", () => {
     $("timerText").textContent=fmt(remaining);
     if($("overlayTimer")) $("overlayTimer").textContent = fmt(remaining);
     if($("overlayStatus")) $("overlayStatus").textContent = isBreak ? "Mola" : (running ? "Çalışıyor" : "Hazır");
+    if($("overlaySubStatus")){
+      if(isBreak) $("overlaySubStatus").textContent = "Mola bitince kaldığın süreden devam edersin.";
+      else if(running) $("overlaySubStatus").textContent = "Odak modundasın. Sadece bu seans.";
+      else if(remaining < totalSeconds) $("overlaySubStatus").textContent = "Kaldığın yerden devam edebilirsin.";
+      else $("overlaySubStatus").textContent = "Başlamak için hazır.";
+    }
     $("timerRing").style.setProperty("--progress", ((totalSeconds-remaining)/totalSeconds*360)+"deg");
     $("mainToggleBtn").textContent = running ? "Duraklat" : (remaining<totalSeconds ? "Devam Et" : "Başlat");
     $("mainToggleBtn").classList.toggle("running", running);

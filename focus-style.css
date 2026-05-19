@@ -947,3 +947,108 @@ body.overlay-open{
     padding:0 12px;
   }
 }
+
+
+/* Fullscreen v2 polish */
+.primary-actions button,
+.mode-row button,
+.break-card button,
+.track,
+.soft-task-btn,
+.clear-plan,
+.exam-task-btn,
+.overlay-controls button{
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+.primary-actions button:hover,
+.mode-row button:hover,
+.break-card button:hover,
+.track:hover,
+.soft-task-btn:hover,
+.clear-plan:hover,
+.exam-task-btn:hover,
+.overlay-controls button:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.08);
+  border-color:rgba(250,204,21,.42)!important;
+  box-shadow:0 0 26px rgba(250,204,21,.16),0 14px 34px rgba(0,0,0,.20);
+}
+.primary-actions button{
+  min-height:60px!important;
+  border-radius:20px!important;
+}
+.mode-row button,
+.break-card button{
+  min-height:52px!important;
+  border-radius:18px!important;
+}
+.focus-overlay{
+  background:
+    radial-gradient(circle at 50% 48%,rgba(250,204,21,.09),transparent 34%),
+    radial-gradient(circle at 15% 18%,rgba(56,189,248,.14),transparent 30%),
+    linear-gradient(135deg,#020617,#050b18 50%,#111827)!important;
+}
+.overlay-timer-wrap{
+  min-height:100vh!important;
+  width:100vw!important;
+  padding:6vh 4vw 14vh!important;
+}
+#overlayTimer{
+  font-size:clamp(76px,15vw,220px)!important;
+  letter-spacing:-4px!important;
+  line-height:1.02!important;
+  padding:.12em .22em .16em!important;
+  border-radius:44px;
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.025));
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 28px 100px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+}
+#overlayStatus{
+  margin-top:24px!important;
+  letter-spacing:.02em;
+}
+.overlay-sub-status{
+  margin-top:8px;
+  color:#cbd5e1;
+  font-weight:900;
+  font-size:clamp(14px,1.6vw,20px);
+}
+.overlay-quote{
+  margin-top:28px!important;
+  border-radius:24px!important;
+  max-width:min(680px,90vw);
+}
+.overlay-controls{
+  bottom:30px!important;
+  padding:12px!important;
+  border-radius:28px!important;
+}
+.overlay-controls button{
+  min-width:112px;
+  min-height:58px!important;
+  border-radius:20px!important;
+  font-size:16px;
+}
+@media(orientation:landscape) and (min-width:900px){
+  .overlay-timer-wrap{
+    grid-template-rows:auto auto auto;
+  }
+  #overlayTimer{
+    font-size:clamp(96px,13vw,210px)!important;
+  }
+}
+@media(max-width:700px){
+  #overlayTimer{
+    font-size:clamp(76px,24vw,148px)!important;
+    letter-spacing:-2px!important;
+    border-radius:34px;
+  }
+  .overlay-controls{
+    bottom:18px!important;
+  }
+  .overlay-controls button{
+    min-width:0;
+    min-height:54px!important;
+    font-size:14px;
+  }
+}
