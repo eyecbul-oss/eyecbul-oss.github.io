@@ -21,9 +21,11 @@ let activeProfile = localStorage.getItem("sezr_active_profile") || "default";
 let currentTrack = "rain";
 let isAudioPlaying = false;
 let totalSeconds = 25 * 60;
+let focusSeconds = totalSeconds;
 let remaining = totalSeconds;
 let timerId = null;
 let running = false;
+let isBreak = false;
 
 const todayKey = () => new Date().toISOString().slice(0,10);
 const profileKey = () => "sezr_focus_profile_" + safeKey(activeProfile);
@@ -156,14 +158,17 @@ function startFocus(){
   if(running) return;
   if(!isAudioPlaying) playAudio();
   running = true;
-  $("timerStatus").textContent = "Çalışıyor";
+  $("timerStatus").textContent = isBreak ? "Mola" : "Çalışıyor";
+  renderSmartStatus();
   timerId = setInterval(() => {
     if(remaining > 0){
       remaining--;
-      const day = ensureToday();
-      day.seconds++;
-      data.totalSeconds++;
-      saveData();
+      if(!isBreak){
+        const day = ensureToday();
+        day.seconds++;
+        data.totalSeconds++;
+        saveData();
+      }
       renderAll();
     }else finishFocus();
   },1000);
@@ -190,21 +195,41 @@ function resetFocus(){
 function finishFocus(){
   clearInterval(timerId);
   running = false;
+
+  if(isBreak){
+    isBreak = false;
+    document.body.classList.remove("break-mode");
+    totalSeconds = focusSeconds;
+    remaining = totalSeconds;
+    $("timerStatus").textContent = "Mola bitti";
+    renderAll();
+    return;
+  }
+
   const day = ensureToday();
   day.pomodoros++;
   data.totalPomodoros++;
   data.sessions.unshift(new Date().toLocaleString("tr-TR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) + " • " + Math.round(totalSeconds/60) + " dk • " + tracks[currentTrack].title);
   data.sessions = data.sessions.slice(0,10);
   saveData();
-  $("successModal").classList.add("show");
-  $("timerStatus").textContent = "Tamamlandı";
+
+  if($("autoNext") && $("autoNext").checked){
+    startBreak(5);
+  }else{
+    $("successModal").classList.add("show");
+    $("timerStatus").textContent = "Tamamlandı";
+  }
+
   renderAll();
 }
 
 function setMode(min,btn){
   document.querySelectorAll(".mode").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
+  isBreak = false;
+  document.body.classList.remove("break-mode");
   totalSeconds = min * 60;
+  focusSeconds = totalSeconds;
   remaining = totalSeconds;
   resetFocus();
 }
@@ -265,7 +290,7 @@ function renderTasks(){
     const row = document.createElement("div");
     row.className = "task " + (t.done ? "done" : "");
     row.innerHTML = `<input type="checkbox" ${t.done ? "checked" : ""}><span>${escapeHtml(t.text)}</span><button>Sil</button>`;
-    row.querySelector("input").addEventListener("change",() => toggleTask(i));
+    row.querySelector("input").addEventListener("change",() => { row.classList.add("flash"); toggleTask(i); });
     row.querySelector("button").addEventListener("click",() => deleteTask(i));
     box.appendChild(row);
   });
@@ -413,10 +438,42 @@ function renderPlan(){
   box.innerHTML = `<div class="plan-step"><b>1</b><span>${a}</span></div><div class="plan-step"><b>2</b><span>${b}</span></div><div class="plan-step"><b>3</b><span>${c}</span></div>`;
 }
 
+
+function startBreak(min){
+  clearInterval(timerId);
+  running = false;
+  isBreak = true;
+  document.body.classList.add("break-mode");
+  totalSeconds = min * 60;
+  remaining = totalSeconds;
+  $("timerStatus").textContent = "Mola";
+  renderAll();
+  startFocus();
+}
+
+function renderSmartStatus(){
+  const box = $("smartStatus");
+  if(!box) return;
+  const day = ensureToday();
+  const min = Math.floor(day.seconds/60);
+  if(isBreak){
+    box.textContent = "Mola modundasın. Kısa dinlen, sonra çalışma seansına dön.";
+  }else if(running){
+    box.textContent = "Seans aktif. Sayacı durdurmadan devam etmeye çalış.";
+  }else if(min === 0){
+    box.textContent = "Bugün henüz çalışma başlamadı. 25 dakikalık bir seans iyi başlangıç olur.";
+  }else if(min < 60){
+    box.textContent = "Bugün " + min + " dakika çalıştın. 60 dakikaya ulaşmak için bir seans daha ekleyebilirsin.";
+  }else{
+    box.textContent = "Günlük hedef tamamlandı. Bundan sonrası tekrar veya yanlış analizi için ideal.";
+  }
+}
+
 function renderAll(){
   updateTimerUI();
   $("aiAdvice").textContent = aiAdvice();
   renderStats();
+  renderSmartStatus();
   renderWeekly();
   renderPlan();
   renderTasks();
@@ -469,6 +526,7 @@ function bind(){
     if($("volumeText")) $("volumeText").textContent = e.target.value + "%";
   });
   document.querySelectorAll(".mode").forEach(btn => btn.addEventListener("click",() => setMode(Number(btn.dataset.min),btn)));
+  document.querySelectorAll(".break-btn").forEach(btn => btn.addEventListener("click",() => startBreak(Number(btn.dataset.break))));
   document.querySelectorAll(".music-card").forEach(card => card.addEventListener("click",() => {
     document.querySelectorAll(".music-card").forEach(c => c.classList.remove("active"));
     card.classList.add("active");

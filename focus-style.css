@@ -26,3 +26,67 @@ body.clean .topbar,body.clean .hero-copy,body.clean .player-card,body.clean .mus
 .profile-mini-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
 .profile-mini-stats div{padding:10px;border-radius:14px;background:rgba(15,23,42,.72);color:#dbeafe;font-size:12px;font-weight:900}
 @media(max-width:980px){.week-grid,.plan-box{grid-template-columns:1fr}}
+
+.break-controls{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.4fr;
+  gap:10px;
+  margin-top:12px;
+}
+.break-btn,.auto-next{
+  min-height:48px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.13);
+  background:rgba(15,23,42,.72);
+  color:white;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.break-btn{
+  cursor:pointer;
+}
+.break-btn:hover{
+  background:rgba(56,189,248,.12);
+}
+.auto-next input{
+  width:18px;
+  height:18px;
+}
+.status-card{
+  margin-top:20px;
+  padding:24px;
+  border-radius:30px;
+  background:linear-gradient(135deg,rgba(56,189,248,.11),rgba(250,204,21,.07)),rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  box-shadow:0 18px 42px rgba(0,0,0,.24);
+}
+.status-card h2{
+  font-family:Montserrat;
+  font-size:26px;
+  margin-bottom:8px;
+}
+#smartStatus{
+  color:#dbeafe;
+  font-weight:900;
+  line-height:1.6;
+}
+.task.flash{
+  animation:taskFlash .7s ease;
+}
+@keyframes taskFlash{
+  0%{transform:scale(1);box-shadow:none}
+  50%{transform:scale(1.02);box-shadow:0 0 30px rgba(37,211,102,.22)}
+  100%{transform:scale(1);box-shadow:none}
+}
+body.break-mode{
+  --accent:34,197,94;
+}
+body.break-mode #timerStatus{
+  color:#86efac;
+}
+@media(max-width:980px){
+  .break-controls{grid-template-columns:1fr}
+}

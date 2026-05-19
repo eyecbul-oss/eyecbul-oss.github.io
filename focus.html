@@ -69,6 +69,12 @@
     <button class="mode" data-min="120">Deep</button>
   </div>
 
+  <div class="break-controls">
+    <button class="break-btn" data-break="5">5 dk mola</button>
+    <button class="break-btn" data-break="10">10 dk mola</button>
+    <label class="auto-next"><input id="autoNext" type="checkbox"> Otomatik sonraki seans</label>
+  </div>
+
   <div class="goal-row">
     <input id="goalInput" placeholder="Bugünkü hedefin">
     <button id="saveGoalBtn">Kaydet</button>
@@ -125,6 +131,11 @@
   <p>Varsayılan hedef: 60 dakika.</p>
   <div class="progress-line"><div id="dailyProgress"></div></div>
   <div id="progressText">0 / 60 dk</div>
+</section>
+
+<section class="status-card">
+  <h2>Şu Anki Durum</h2>
+  <div id="smartStatus">Başlamak için hazır.</div>
 </section>
 
 <h2 class="section-title">Haftalık Özet</h2>
