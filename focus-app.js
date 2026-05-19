@@ -694,6 +694,12 @@ document.addEventListener("DOMContentLoaded", () => {
       $("planProgressText").textContent = "Plan ilerlemesi: %" + planPct;
     }
     $("accountEmail").textContent = guestMode ? "Misafir mod" : (user ? user.email : "");
+    if($("profileChip")){
+      $("profileChip").textContent = guestMode ? "Misafir Mod" : (user ? user.email : "Hesap");
+    }
+    if($("startHint")){
+      $("startHint").classList.toggle("hidden", localStorage.getItem("sezr_hide_start_hint") === "1");
+    }
 renderNotes();
     renderSessions();
   }
@@ -849,6 +855,7 @@ function exportData(){ const raw=JSON.stringify(data); navigator.clipboard?navig
   $("registerTab").onclick=()=>setAuthMode("register");
   $("authSubmit").onclick=()=> mode==="login" ? signIn() : register();
   $("forgotBtn").onclick=forgot;
+  if($("hideHintBtn")) $("hideHintBtn").onclick=()=>{localStorage.setItem("sezr_hide_start_hint","1"); render();};
   $("guestBtn").onclick=continueGuest;
   $("mainToggleBtn").onclick=toggle;
   $("resetBtn").onclick=reset;
