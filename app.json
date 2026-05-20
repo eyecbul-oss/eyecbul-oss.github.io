@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "SezR Focus",
+    "slug": "sezr-focus",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "sezrfocus",
+    "android": {
+      "package": "com.sezrmatematik.focus"
+    },
+    "ios": {
+      "bundleIdentifier": "com.sezrmatematik.focus"
+    }
+  }
+}
