@@ -15,16 +15,17 @@ window.SEZR_FOCUS_CONFIG = {
   function addCss(file){
     var link=document.createElement('link');
     link.rel='stylesheet';
-    link.href=file+'?v=focus-premium-1';
+    link.href=file+'?v=focus-premium-2';
     document.head.appendChild(link);
   }
   function addJs(file){
     var script=document.createElement('script');
-    script.src=file+'?v=focus-premium-1';
+    script.src=file+'?v=focus-premium-2';
     script.defer=true;
     document.body.appendChild(script);
   }
   addCss('focus-premium-upgrade.css');
+  addCss('focus-ui-hotfix.css');
   window.addEventListener('DOMContentLoaded',function(){
     [
       'focus-premium-upgrade.js',
