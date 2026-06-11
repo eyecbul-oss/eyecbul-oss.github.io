@@ -19,13 +19,14 @@
 </header>
 
 <section class="hero focus-hero">
-<div class="hero-card glass"><span class="badge">FOCUS</span><h1>Planlı çalış.<br><span>Odakta kal.</span></h1><p>Pomodoro, görev takibi, XP, rozetler ve sınav sayacı ile SezR öğrencileri için sade, modern ve takip edilebilir çalışma alanı.</p></div>
-<div class="stats glass"><div class="stat"><b id="todayMin">0</b><span>Dakika</span></div><div class="stat"><b id="todayPom">0</b><span>Seans</span></div><div class="stat"><b id="streak">0</b><span>Seri</span></div><div class="stat"><b id="score">0%</b><span>Odak</span></div><div class="stat"><b id="xp">0</b><span>XP</span></div><div class="stat"><b id="goalStat">120</b><span>Hedef dk</span></div></div>
+<div class="hero-card glass"><span class="badge">FOCUS</span><h1>Planlı çalış.<br><span>Odakta kal.</span></h1><p>Ders bazlı Pomodoro, XP, rozet, seviye, çalışma takvimi, YKS hedefleri ve yedekleme araçları tek panelde.</p></div>
+<div class="stats glass"><div class="stat"><b id="todayMin">0</b><span>Dakika</span></div><div class="stat"><b id="todayPom">0</b><span>Seans</span></div><div class="stat"><b id="streak">0</b><span>Seri</span></div><div class="stat"><b id="score">0%</b><span>Odak</span></div><div class="stat"><b id="xp">0</b><span>XP</span></div><div class="stat"><b id="levelNo">1</b><span>Seviye</span></div></div>
 </section>
 
 <section class="focus-dashboard">
 <section class="glass panel timer-panel focus-card-large">
 <div class="panel-head"><div><span class="eyebrow">Pomodoro</span><h2>Odak Sayacı</h2></div><button class="ghost" id="full">Tam Ekran</button></div>
+<label class="mini-label">Ders seç <select id="subjectSelect"></select></label>
 <div class="timer-ring" id="ring"><div class="timer-inner"><div class="time" id="time">25:00</div><div class="status" id="status">Hazır</div></div></div>
 <div class="actions"><button class="primary" id="toggle">Başlat</button><button class="secondary" id="reset">Sıfırla</button></div>
 <div class="modes"><button class="active" data-min="25">25 dk</button><button data-min="45">45 dk</button><button data-min="60">60 dk</button><button data-min="120">Deep</button></div>
@@ -44,32 +45,49 @@
 <label>Ses modu <select id="soundMode"><option value="silent">Sessiz</option><option value="soft">Yumuşak</option><option value="classic">Klasik</option><option value="alarm">Alarm</option></select></label>
 <label>Tema <select id="themeMode"><option value="dark">Gece</option><option value="blue">Mavi</option><option value="forest">Yeşil</option><option value="light">Açık</option></select></label>
 </div>
-<p class="muted" id="goalText">Bugünkü hedef: 120 dk</p>
-<div class="progress goal-progress"><span id="goalProg"></span></div>
+<div class="backup-row"><button class="secondary" id="exportJson">JSON Yedekle</button><button class="secondary" id="importJsonBtn">JSON İçe Aktar</button><input id="importJson" type="file" accept="application/json,.json" hidden></div>
+<p class="muted" id="goalText">Bugünkü hedef: 120 dk</p><div class="progress goal-progress"><span id="goalProg"></span></div>
+</section>
+
+<section class="glass panel level-panel">
+<div class="panel-head"><div><span class="eyebrow">Seviye</span><h2 id="levelTitle">Başlangıç</h2></div><span class="exam-chip" id="levelChip">Lv 1</span></div>
+<p class="muted" id="levelText">Bir sonraki seviyeye ilerle.</p><div class="progress level-progress"><span id="levelProg"></span></div>
 </section>
 
 <section class="glass panel weekly-panel">
 <div class="panel-head"><div><span class="eyebrow">İstatistik</span><h2>Haftalık Özet</h2></div></div>
-<div class="week-grid" id="weekStats"></div>
-<p class="muted" id="weekText">Haftalık toplam: 0 dk</p>
+<div class="week-grid" id="weekStats"></div><p class="muted" id="weekText">Haftalık toplam: 0 dk</p>
+</section>
+
+<section class="glass panel heatmap-panel">
+<div class="panel-head"><div><span class="eyebrow">Takvim</span><h2>30 Günlük Çalışma Haritası</h2></div></div>
+<div class="heatmap" id="heatmap"></div><p class="muted" id="heatmapText">Koyu kareler daha yoğun çalışma günlerini gösterir.</p>
+</section>
+
+<section class="glass panel subject-panel">
+<div class="panel-head"><div><span class="eyebrow">Dersler</span><h2>Ders Bazlı İstatistik</h2></div></div>
+<div class="subject-list" id="subjectStats"></div>
+</section>
+
+<section class="glass panel yks-panel">
+<div class="panel-head"><div><span class="eyebrow">YKS</span><h2>Öğrenci Paneli</h2></div></div>
+<div class="settings-grid">
+<label>Günlük soru hedefi <input id="questionGoal" type="number" min="0" max="1000" step="5"></label>
+<label>Bugünkü soru <input id="questionDone" type="number" min="0" max="1000" step="5"></label>
+<label>Haftalık deneme <input id="trialCount" type="number" min="0" max="20" step="1"></label>
+</div>
+<p class="muted" id="yksText">YKS hedefleri burada izlenir.</p><div class="progress"><span id="questionProg"></span></div>
 </section>
 
 <section class="glass panel badges-panel">
 <div class="panel-head"><div><span class="eyebrow">Başarı</span><h2>Rozetler</h2></div></div>
-<div class="badge-grid" id="badges"></div>
-<p class="muted" id="xpText">XP; çalışma dakikası, seans ve tamamlanan görevlerden hesaplanır.</p>
+<div class="badge-grid" id="badges"></div><p class="muted" id="xpText">XP; çalışma dakikası, seans ve tamamlanan görevlerden hesaplanır.</p>
 </section>
 
 <section class="glass panel exam-panel">
 <div class="panel-head"><div><span class="eyebrow">Geri Sayım</span><h2>Sınav Sayacı</h2></div><span class="exam-chip" id="examChip">YKS</span></div>
-<div class="exam-controls">
-<select id="exam">
-<option value="YKS">YKS</option><option value="TYT">TYT</option><option value="AYT">AYT</option><option value="LGS">LGS</option><option value="KPSS">KPSS Lisans</option><option value="KPSS_OABT">KPSS ÖABT</option><option value="DGS">DGS</option><option value="ALES_1">ALES/1</option><option value="ALES_2">ALES/2</option><option value="YDS_1">YDS/1</option><option value="YDS_2">YDS/2</option>
-</select>
-<input id="examDate" type="date">
-</div>
-<p class="exam-note" id="examNote">Tarih alanı düzenlenebilir.</p>
-<div class="count"><div><b id="d">0</b><span>Gün</span></div><div><b id="h">0</b><span>Saat</span></div><div><b id="m">0</b><span>Dk</span></div><div><b id="s">0</b><span>Sn</span></div></div>
+<div class="exam-controls"><select id="exam"><option value="YKS">YKS</option><option value="TYT">TYT</option><option value="AYT">AYT</option><option value="LGS">LGS</option><option value="KPSS">KPSS Lisans</option><option value="KPSS_OABT">KPSS ÖABT</option><option value="DGS">DGS</option><option value="ALES_1">ALES/1</option><option value="ALES_2">ALES/2</option><option value="YDS_1">YDS/1</option><option value="YDS_2">YDS/2</option></select><input id="examDate" type="date"></div>
+<p class="exam-note" id="examNote">Tarih alanı düzenlenebilir.</p><div class="count"><div><b id="d">0</b><span>Gün</span></div><div><b id="h">0</b><span>Saat</span></div><div><b id="m">0</b><span>Dk</span></div><div><b id="s">0</b><span>Sn</span></div></div>
 </section>
 </section>
 
