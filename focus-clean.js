@@ -15,6 +15,15 @@ const examDefaults = {
   YDS_2: { date: "2026-10-18", note: "YDS/2 için varsayılan tarih: 18 Ekim 2026. Takvime göre düzenlenebilir." }
 };
 
+const badges = [
+  { id: "first", title: "İlk Odak", icon: "🎯", desc: "1 seans", test: s => s.totalPom >= 1 },
+  { id: "hour", title: "60 Dakika", icon: "⏱️", desc: "Toplam 60 dk", test: s => s.totalMin >= 60 },
+  { id: "goal", title: "Hedef Tamam", icon: "✅", desc: "Günlük hedef", test: s => s.todayMin >= s.goal },
+  { id: "streak3", title: "3 Gün Seri", icon: "🔥", desc: "3 gün üst üste", test: s => s.streak >= 3 },
+  { id: "task10", title: "Görev Ustası", icon: "📌", desc: "10 görev", test: s => s.doneTasks >= 10 },
+  { id: "xp1000", title: "1000 XP", icon: "🏆", desc: "1000 puan", test: s => s.xp >= 1000 }
+];
+
 let total = 1500;
 let remain = 1500;
 let run = false;
@@ -60,7 +69,10 @@ data = {
   tasks: normalizeTasks(data.tasks),
   daily: normalizeDaily(data.daily),
   exam: data.exam || "YKS",
-  examDate: data.examDate || (examDefaults[data.exam || "YKS"] || examDefaults.YKS).date
+  examDate: data.examDate || (examDefaults[data.exam || "YKS"] || examDefaults.YKS).date,
+  goal: Number(data.goal) || 120,
+  soundMode: data.soundMode || "soft",
+  theme: data.theme || "dark"
 };
 
 function ensureToday() {
@@ -97,6 +109,44 @@ function calcStreak() {
   return streak;
 }
 
+function weekDays() {
+  const days = [];
+  const cursor = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const day = new Date(cursor);
+    day.setDate(cursor.getDate() - i);
+    days.push({ key: todayKey(day), label: day.toLocaleDateString("tr-TR", { weekday: "short" }) });
+  }
+  return days;
+}
+
+function summary() {
+  const today = ensureToday();
+  const totalMin = Object.values(data.daily).reduce((sum, day) => sum + (Number(day.min) || 0), 0);
+  const totalPom = Object.values(data.daily).reduce((sum, day) => sum + (Number(day.pom) || 0), 0);
+  const doneTasks = data.tasks.filter(task => task.done).length;
+  const xp = totalMin * 5 + totalPom * 20 + doneTasks * 30 + calcStreak() * 50;
+  return { todayMin: today.min, totalMin, totalPom, doneTasks, streak: calcStreak(), goal: data.goal, xp };
+}
+
+function playDoneSound() {
+  if (data.soundMode === "silent") return;
+  try {
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
+    const tones = { soft: 440, classic: 660, alarm: 880 };
+    const gain = audio.createGain();
+    const osc = audio.createOscillator();
+    osc.frequency.value = tones[data.soundMode] || 440;
+    osc.type = data.soundMode === "alarm" ? "square" : "sine";
+    gain.gain.setValueAtTime(0.001, audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.14, audio.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.45);
+    osc.connect(gain).connect(audio.destination);
+    osc.start();
+    osc.stop(audio.currentTime + 0.5);
+  } catch (e) {}
+}
+
 function renderTasks() {
   const list = $("#tasks");
   list.innerHTML = "";
@@ -130,16 +180,60 @@ function renderTasks() {
   $("#taskText").textContent = `Görev ilerlemesi: %${pct} (${done}/${data.tasks.length})`;
 }
 
+function renderWeek(stats) {
+  const grid = $("#weekStats");
+  const days = weekDays();
+  const max = Math.max(data.goal, ...days.map(day => Number(data.daily[day.key]?.min) || 0), 1);
+  grid.innerHTML = "";
+  days.forEach(day => {
+    const min = Number(data.daily[day.key]?.min) || 0;
+    const card = document.createElement("div");
+    card.className = "week-day";
+    card.innerHTML = `<b>${min}</b><span>${day.label}</span><i style="height:${Math.max(8, Math.round(min / max * 100))}%"></i>`;
+    grid.appendChild(card);
+  });
+  $("#weekText").textContent = `Haftalık toplam: ${days.reduce((sum, day) => sum + (Number(data.daily[day.key]?.min) || 0), 0)} dk • Toplam seans: ${stats.totalPom}`;
+}
+
+function renderBadges(stats) {
+  const box = $("#badges");
+  box.innerHTML = "";
+  badges.forEach(badge => {
+    const earned = badge.test(stats);
+    const item = document.createElement("div");
+    item.className = "achievement" + (earned ? " earned" : "");
+    item.innerHTML = `<strong>${badge.icon}</strong><b>${badge.title}</b><span>${badge.desc}</span>`;
+    box.appendChild(item);
+  });
+  $("#xpText").textContent = `${stats.xp} XP • ${badges.filter(b => b.test(stats)).length}/${badges.length} rozet açıldı.`;
+}
+
+function applyTheme() {
+  document.body.dataset.theme = data.theme;
+  $("#themeMode").value = data.theme;
+}
+
 function render() {
   const today = ensureToday();
+  const stats = summary();
+  const goalPct = Math.min(100, Math.round((today.min || 0) / data.goal * 100));
   $("#todayMin").textContent = today.min;
   $("#todayPom").textContent = today.pom;
-  $("#streak").textContent = calcStreak();
-  $("#score").textContent = Math.min(100, Math.round((today.min || 0) / 120 * 100)) + "%";
+  $("#streak").textContent = stats.streak;
+  $("#score").textContent = goalPct + "%";
+  $("#xp").textContent = stats.xp;
+  $("#goalStat").textContent = data.goal;
+  $("#dailyGoal").value = data.goal;
+  $("#soundMode").value = data.soundMode;
+  $("#goalText").textContent = `Bugünkü hedef: ${data.goal} dk • Tamamlanma: %${goalPct}`;
+  $("#goalProg").style.width = goalPct + "%";
   $("#time").textContent = fmt(remain);
   $("#otime").textContent = fmt(remain);
   $("#ring").style.setProperty("--deg", ((total - remain) / total * 360) + "deg");
   renderTasks();
+  renderWeek(stats);
+  renderBadges(stats);
+  applyTheme();
 }
 
 function toggleTask(index) {
@@ -159,6 +253,7 @@ function completeSession() {
   today.min += Math.round(total / 60);
   today.pom += 1;
   save();
+  playDoneSound();
 }
 
 function tick() {
@@ -226,6 +321,37 @@ $("#task").addEventListener("keydown", e => {
   if (e.key === "Enter") $("#add").click();
 });
 
+$("#dailyGoal").addEventListener("change", e => {
+  data.goal = Math.max(10, Math.min(600, Number(e.target.value) || 120));
+  save();
+  render();
+});
+
+$("#soundMode").addEventListener("change", e => {
+  data.soundMode = e.target.value;
+  save();
+  render();
+});
+
+$("#themeMode").addEventListener("change", e => {
+  data.theme = e.target.value;
+  save();
+  render();
+});
+
+$("#exportCsv").onclick = () => {
+  const rows = [["date", "minutes", "sessions"]];
+  Object.keys(data.daily).sort().forEach(key => rows.push([key, data.daily[key].min || 0, data.daily[key].pom || 0]));
+  const csv = rows.map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "sezr-focus-istatistik.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 $("#full").onclick = () => $("#overlay").classList.add("show");
 $("#oclose").onclick = () => $("#overlay").classList.remove("show");
 
@@ -267,6 +393,7 @@ function updateExam() {
 
 ensureToday();
 save();
+applyTheme();
 setExam(data.exam, data.examDate, false);
 setInterval(updateExam, 1000);
 render();
