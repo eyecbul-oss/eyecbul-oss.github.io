@@ -1,147 +1,61 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SezR Focus</title>
-  <meta name="theme-color" content="#020617" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="focus-harmony.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SezR Focus</title>
+<meta name="theme-color" content="#020617">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="focus-harmony.css">
 </head>
 <body>
-  <div class="orb orb-one"></div>
-  <div class="orb orb-two"></div>
+<div class="orb orb-one"></div><div class="orb orb-two"></div>
+<main class="wrap">
+<header class="nav">
+<a class="brand" href="index.html">Sez<span>R</span> Focus</a>
+<nav class="links"><a href="index.html">Ana Sayfa</a><a href="dersler.html">Derslerim</a><a href="youtube.html">YouTube</a><a href="pdf.html">PDF</a><a class="active" href="focus.html">Focus</a><a href="iletisim.html">Kayıt</a></nav>
+</header>
 
-  <main class="wrap">
-    <header class="nav">
-      <a class="brand" href="index.html">Sez<span>R</span> Focus</a>
-      <nav class="links">
-        <a href="index.html">Ana Sayfa</a>
-        <a href="dersler.html">Derslerim</a>
-        <a href="youtube.html">YouTube</a>
-        <a href="pdf.html">PDF</a>
-        <a class="active" href="focus.html">Focus</a>
-        <a href="iletisim.html">Kayıt</a>
-      </nav>
-    </header>
+<section class="hero">
+<div class="hero-card glass"><span class="badge">FOCUS</span><h1>Planlı çalış.<br><span>Odakta kal.</span></h1><p>Pomodoro, görev takibi ve sınav sayacı ile SezR öğrencileri için sade, modern ve takip edilebilir çalışma alanı.</p></div>
+<div class="stats glass"><div class="stat"><b id="todayMin">0</b><span>Dakika</span></div><div class="stat"><b id="todayPom">0</b><span>Seans</span></div><div class="stat"><b id="streak">0</b><span>Seri</span></div><div class="stat"><b id="score">0%</b><span>Odak</span></div></div>
+</section>
 
-    <section class="hero">
-      <div class="hero-card glass">
-        <span class="badge">FOCUS</span>
-        <h1>Planlı çalış.<br><span>Odakta kal.</span></h1>
-        <p>Pomodoro, görev takibi ve sınav sayacı ile SezR öğrencileri için sade, modern ve takip edilebilir çalışma alanı.</p>
-      </div>
+<section class="main-grid">
+<section class="glass panel timer-panel">
+<div class="panel-head"><div><span class="eyebrow">Pomodoro</span><h2>Odak Sayacı</h2></div><button class="ghost" id="full">Tam Ekran</button></div>
+<div class="timer-ring" id="ring"><div class="timer-inner"><div class="time" id="time">25:00</div><div class="status" id="status">Hazır</div></div></div>
+<div class="actions"><button class="primary" id="toggle">Başlat</button><button class="secondary" id="reset">Sıfırla</button></div>
+<div class="modes"><button class="active" data-min="25">25 dk</button><button data-min="45">45 dk</button><button data-min="60">60 dk</button><button data-min="120">Deep</button></div>
+</section>
 
-      <div class="stats glass">
-        <div class="stat"><b id="todayMin">0</b><span>Dakika</span></div>
-        <div class="stat"><b id="todayPom">0</b><span>Seans</span></div>
-        <div class="stat"><b id="streak">0</b><span>Seri</span></div>
-        <div class="stat"><b id="score">0%</b><span>Odak</span></div>
-      </div>
-    </section>
+<section class="glass panel">
+<div class="panel-head"><div><span class="eyebrow">Plan</span><h2>Görevler</h2></div></div>
+<div class="input-row"><input id="task" placeholder="Görev ekle"><button class="primary" id="add">Ekle</button></div>
+<div class="list" id="tasks"></div><div class="progress"><span id="taskProg"></span></div><p class="muted" id="taskText">Görev ilerlemesi: %0</p>
+</section>
+</section>
 
-    <section class="main-grid">
-      <section class="glass panel timer-panel">
-        <div class="panel-head">
-          <div>
-            <span class="eyebrow">Pomodoro</span>
-            <h2>Odak Sayacı</h2>
-          </div>
-          <button class="ghost" id="full">Tam Ekran</button>
-        </div>
+<section class="main-grid lower">
+<section class="glass panel exam-panel">
+<div class="panel-head"><div><span class="eyebrow">Geri Sayım</span><h2>Sınav Sayacı</h2></div><span class="exam-chip" id="examChip">YKS</span></div>
+<div class="exam-controls">
+<select id="exam">
+<option value="YKS">YKS</option><option value="TYT">TYT</option><option value="AYT">AYT</option><option value="LGS">LGS</option><option value="KPSS">KPSS Lisans</option><option value="KPSS_OABT">KPSS ÖABT</option><option value="DGS">DGS</option><option value="ALES_1">ALES/1</option><option value="ALES_2">ALES/2</option><option value="YDS_1">YDS/1</option><option value="YDS_2">YDS/2</option>
+</select>
+<input id="examDate" type="date">
+</div>
+<p class="exam-note" id="examNote">Tarih alanı düzenlenebilir.</p>
+<div class="count"><div><b id="d">0</b><span>Gün</span></div><div><b id="h">0</b><span>Saat</span></div><div><b id="m">0</b><span>Dk</span></div><div><b id="s">0</b><span>Sn</span></div></div>
+</section>
 
-        <div class="timer-ring" id="ring">
-          <div class="timer-inner">
-            <div class="time" id="time">25:00</div>
-            <div class="status" id="status">Hazır</div>
-          </div>
-        </div>
+<section class="glass panel rhythm"><span class="eyebrow">Alışkanlık</span><h2>Haftalık Ritim</h2><p class="muted">Her gün küçük ama düzenli hedefler belirle. Çalışma dakikan ve seans sayın cihazında saklanır.</p><div class="rhythm-grid"><div>Hedef</div><div>Odak</div><div>Tekrar</div><div>Takip</div></div></section>
+</section>
 
-        <div class="actions">
-          <button class="primary" id="toggle">Başlat</button>
-          <button class="secondary" id="reset">Sıfırla</button>
-        </div>
-
-        <div class="modes">
-          <button class="active" data-min="25">25 dk</button>
-          <button data-min="45">45 dk</button>
-          <button data-min="60">60 dk</button>
-          <button data-min="120">Deep</button>
-        </div>
-      </section>
-
-      <section class="glass panel">
-        <div class="panel-head">
-          <div>
-            <span class="eyebrow">Plan</span>
-            <h2>Görevler</h2>
-          </div>
-        </div>
-
-        <div class="input-row">
-          <input id="task" placeholder="Görev ekle" />
-          <button class="primary" id="add">Ekle</button>
-        </div>
-
-        <div class="list" id="tasks"></div>
-        <div class="progress"><span id="taskProg"></span></div>
-        <p class="muted" id="taskText">Görev ilerlemesi: %0</p>
-      </section>
-    </section>
-
-    <section class="main-grid lower">
-      <section class="glass panel exam-panel">
-        <div class="panel-head">
-          <div>
-            <span class="eyebrow">Geri Sayım</span>
-            <h2>Sınav Sayacı</h2>
-          </div>
-          <span class="exam-chip" id="examChip">YKS</span>
-        </div>
-
-        <div class="exam-controls">
-          <select id="exam">
-            <option value="YKS">YKS</option>
-            <option value="LGS">LGS</option>
-            <option value="KPSS">KPSS</option>
-            <option value="DGS">DGS</option>
-          </select>
-          <input id="examDate" type="date" />
-        </div>
-
-        <div class="count" aria-label="Sınava kalan süre">
-          <div><b id="d">0</b><span>Gün</span></div>
-          <div><b id="h">0</b><span>Saat</span></div>
-          <div><b id="m">0</b><span>Dk</span></div>
-          <div><b id="s">0</b><span>Sn</span></div>
-        </div>
-      </section>
-
-      <section class="glass panel rhythm">
-        <span class="eyebrow">Alışkanlık</span>
-        <h2>Haftalık Ritim</h2>
-        <p class="muted">Her gün küçük ama düzenli hedefler belirle. Çalışma dakikan ve seans sayın cihazında saklanır.</p>
-        <div class="rhythm-grid">
-          <div>Hedef</div>
-          <div>Odak</div>
-          <div>Tekrar</div>
-          <div>Takip</div>
-        </div>
-      </section>
-    </section>
-
-    <p class="footer-note">SezR Focus</p>
-  </main>
-
-  <div class="overlay" id="overlay">
-    <div class="overlay-box">
-      <div class="time" id="otime">25:00</div>
-      <p id="overlayStatus">Odaklan</p>
-      <button class="primary" id="oclose">Çık</button>
-    </div>
-  </div>
-
-  <script src="focus-clean.js"></script>
+<p class="footer-note">SezR Focus</p>
+</main>
+<div class="overlay" id="overlay"><div class="overlay-box"><div class="time" id="otime">25:00</div><p id="overlayStatus">Odaklan</p><button class="primary" id="oclose">Çık</button></div></div>
+<script src="focus-clean.js"></script>
 </body>
 </html>
