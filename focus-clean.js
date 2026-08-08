@@ -14,6 +14,8 @@ const examDefaults = {
   YDS_1: { date: "2026-04-12", note: "YDS/1 için varsayılan tarih: 12 Nisan 2026. Bu tarih geçmiş olabilir; alanı güncelleyebilirsin." },
   YDS_2: { date: "2026-10-18", note: "YDS/2 için varsayılan tarih: 18 Ekim 2026. Takvime göre düzenlenebilir." }
 };
+function isFutureDate(value) { const date = new Date(`${value}T23:59:59`); return Boolean(value) && !Number.isNaN(date.getTime()) && date.getTime() >= Date.now(); }
+function defaultExamDate(exam) { const candidate = (examDefaults[exam] || examDefaults.YKS).date; return isFutureDate(candidate) ? candidate : ""; }
 const defaultSubjects = ["Matematik", "Geometri", "Fizik", "Kimya", "Biyoloji", "Türkçe", "TYT Genel", "AYT Genel"];
 const levelNames = ["Başlangıç", "Düzenli Çalışan", "Odaklı", "Planlı", "Kararlı", "Usta Odakçı", "Şampiyon"];
 const badges = [
@@ -38,7 +40,7 @@ data = {
   daily: normalizeDaily(data.daily),
   subjectStats: normalizeSubjectStats(data.subjectStats),
   exam: data.exam || "YKS",
-  examDate: data.examDate || (examDefaults[data.exam || "YKS"] || examDefaults.YKS).date,
+  examDate: isFutureDate(data.examDate) ? data.examDate : defaultExamDate(data.exam || "YKS"),
   goal: Number(data.goal) || 120,
   soundMode: data.soundMode || "soft",
   theme: data.theme || "dark",
@@ -87,7 +89,7 @@ $("#exportJson").onclick=()=>downloadFile("sezr-focus-yedek.json","application/j
 $("#importJsonBtn").onclick=()=>$("#importJson").click();
 $("#importJson").addEventListener("change",e=>{ const file=e.target.files?.[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ try{ const imported=JSON.parse(reader.result); data={...data,...imported,tasks:normalizeTasks(imported.tasks),daily:normalizeDaily(imported.daily),subjectStats:normalizeSubjectStats(imported.subjectStats),yks:{...data.yks,...(imported.yks||{})}}; save(); render(); alert("Focus yedeği içe aktarıldı."); }catch(err){ alert("JSON dosyası okunamadı."); } }; reader.readAsText(file); });
 $("#full").onclick=()=>$("#overlay").classList.add("show"); $("#oclose").onclick=()=>$("#overlay").classList.remove("show");
-function setExam(examName,dateValue,forceDefault=false){ const selected=examDefaults[examName]?examName:"YKS"; data.exam=selected; data.examDate=forceDefault?examDefaults[selected].date:(dateValue||examDefaults[selected].date); $("#exam").value=selected; $("#examDate").value=data.examDate; $("#examChip").textContent=selected.replace("_"," "); save(); updateExam(); }
+function setExam(examName,dateValue,forceDefault=false){ const selected=examDefaults[examName]?examName:"YKS"; data.exam=selected; data.examDate=forceDefault?defaultExamDate(selected):(dateValue||defaultExamDate(selected)); $("#exam").value=selected; $("#examDate").value=data.examDate; $("#examChip").textContent=selected.replace("_"," "); save(); updateExam(); }
 $("#exam").addEventListener("change",e=>setExam(e.target.value,null,true)); $("#examDate").addEventListener("change",e=>setExam($("#exam").value,e.target.value,false));
-function updateExam(){ const current=$("#exam").value||"YKS", targetValue=$("#examDate").value||(examDefaults[current]||examDefaults.YKS).date; const target=new Date(targetValue+"T00:00:00").getTime(); let diff=target-Date.now(); const note=examDefaults[current]?.note||"Tarih alanı düzenlenebilir."; if(Number.isNaN(diff)) diff=0; $("#examNote").textContent=diff<0?note+" Bu seçili tarih tamamlandı/geçmişte kaldı.":note; if(diff<0) diff=0; const sec=Math.floor(diff/1000); $("#d").textContent=Math.floor(sec/86400); $("#h").textContent=Math.floor((sec%86400)/3600); $("#m").textContent=Math.floor((sec%3600)/60); $("#s").textContent=sec%60; }
+function updateExam(){ const current=$("#exam").value||"YKS", targetValue=$("#examDate").value; if(!isFutureDate(targetValue)){ $("#examNote").textContent="Güncel sınav tarihi henüz eklenmedi. ÖSYM takvimi açıklandığında tarih alanından seçebilirsin."; ["#d","#h","#m","#s"].forEach(id=>$(id).textContent="—"); return; } const target=new Date(targetValue+"T00:00:00").getTime(); const diff=Math.max(0,target-Date.now()); const note=examDefaults[current]?.note||"Tarih alanı düzenlenebilir."; $("#examNote").textContent=note; const sec=Math.floor(diff/1000); $("#d").textContent=Math.floor(sec/86400); $("#h").textContent=Math.floor((sec%86400)/3600); $("#m").textContent=Math.floor((sec%3600)/60); $("#s").textContent=sec%60; }
 ensureToday(); save(); applyTheme(); setExam(data.exam,data.examDate,false); setInterval(updateExam,1000); render(); updateExam();
